@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <!-- Background circle for maskable -->
+  <rect width="192" height="192" rx="40" fill="#f4f5f7"/>
+  <!-- Calculator Body -->
+  <rect x="46" y="26" width="100" height="140" rx="14" fill="url(#bodyGrad)"/>
+  <!-- Screen -->
+  <rect x="54" y="36" width="84" height="44" rx="8" fill="#f8fafc"/>
+  <!-- Left Eye -->
+  <circle cx="78" cy="58" r="12" fill="#fff" stroke="#334155" stroke-width="3"/>
+  <circle cx="78" cy="58" r="5" fill="#334155"/>
+  <!-- Right Eye -->
+  <circle cx="114" cy="58" r="12" fill="#fff" stroke="#334155" stroke-width="3"/>
+  <circle cx="114" cy="58" r="5" fill="#334155"/>
+  <!-- Buttons Grid -->
+  <g fill="#fff" opacity="0.85">
+    <rect x="56" y="92" width="16" height="14" rx="4"/>
+    <rect x="78" y="92" width="16" height="14" rx="4"/>
+    <rect x="100" y="92" width="16" height="14" rx="4"/>
+    <rect x="122" y="92" width="16" height="14" rx="4"/>
+    <rect x="56" y="112" width="16" height="14" rx="4"/>
+    <rect x="78" y="112" width="16" height="14" rx="4"/>
+    <rect x="100" y="112" width="16" height="14" rx="4"/>
+    <rect x="122" y="112" width="16" height="14" rx="4"/>
+    <rect x="56" y="132" width="38" height="14" rx="4"/>
+    <rect x="100" y="132" width="16" height="14" rx="4"/>
+  </g>
+  <!-- Equals button (gold accent) -->
+  <rect x="122" y="132" width="16" height="14" rx="4" fill="#fcd34d"/>
+</svg>

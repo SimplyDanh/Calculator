@@ -1,0 +1,8 @@
+# Local agent tooling
+.agent/
+
+# Screenshots
+*.png
+
+# System instructions (local)
+system_instructions.md
