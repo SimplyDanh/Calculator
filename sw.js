@@ -1,5 +1,5 @@
 // Service Worker — Percentage & Math Calculator PWA
-const CACHE_NAME = 'calc-v2';
+const CACHE_NAME = 'calc-v3';
 
 // App shell + critical CDN dependencies to pre-cache on install
 const PRECACHE_URLS = [
