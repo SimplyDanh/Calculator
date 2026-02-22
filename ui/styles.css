@@ -1296,6 +1296,15 @@
                 gap: 0.5rem;
             }
 
+            .theme-switch {
+                transform: scale(0.94);
+                transform-origin: top right;
+            }
+
+            .theme-dropdown {
+                margin-right: 0;
+            }
+
             .calculator-wrapper {
                 width: 70px;
             }
