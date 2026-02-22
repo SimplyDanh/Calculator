@@ -1410,15 +1410,40 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.45);
             border-radius: 20px;
-            padding: 2rem 2rem 1.5rem;
             max-width: 36rem;
             width: 92%;
             max-height: 80vh;
-            overflow-y: auto;
+            overflow: hidden;
             box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
             transform: translateY(24px) scale(0.96);
             transition: transform 0.35s var(--spring);
             color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .about-modal-inner {
+            padding: 2rem 2rem 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+            background: transparent;
+        }
+
+        .about-modal-inner::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .about-modal-inner::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .about-modal-inner::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 3px;
+        }
+
+        body.dark-theme .about-modal-inner::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
         }
 
         body.dark-theme .about-modal {
@@ -2985,105 +3010,106 @@
                 </svg>
             </button>
 
-            <!-- Header -->
-            <div class="about-header">
-                <h2 id="about-heading">About Percentage &amp; Math Calculator</h2>
-            </div>
+            <div class="about-modal-inner">
+                <!-- Header -->
+                <div class="about-header">
+                    <h2 id="about-heading">About Percentage &amp; Math Calculator</h2>
+                </div>
 
-            <!-- Introduction -->
-            <p class="about-intro">A comprehensive PWA that combines percentage calculations, a full standard &amp;
-                scientific calculator with MathLive WYSIWYG input, 12 themes, and an audit tape — all running
-                client-side with zero dependencies on a server.</p>
+                <!-- Introduction -->
+                <p class="about-intro">A comprehensive PWA that combines percentage calculations, a full standard &amp;
+                    scientific calculator with MathLive WYSIWYG input, 12 themes, and an audit tape — all running
+                    client-side with zero dependencies on a server.</p>
 
-            <!-- 2-Column Grid -->
-            <div class="about-grid">
-                <!-- Tech Stack -->
-                <div>
-                    <div class="about-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="16 18 22 12 16 6"></polyline>
-                            <polyline points="8 6 2 12 8 18"></polyline>
-                        </svg>
-                        Tech Stack
+                <!-- 2-Column Grid -->
+                <div class="about-grid">
+                    <!-- Tech Stack -->
+                    <div>
+                        <div class="about-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="16 18 22 12 16 6"></polyline>
+                                <polyline points="8 6 2 12 8 18"></polyline>
+                            </svg>
+                            Tech Stack
+                        </div>
+                        <div class="about-badges">
+                            <span class="about-badge">HTML5</span>
+                            <span class="about-badge">CSS3</span>
+                            <span class="about-badge">Vanilla JS</span>
+                            <span class="about-badge">MathLive</span>
+                            <span class="about-badge">Math.js</span>
+                            <span class="about-badge">PWA</span>
+                        </div>
                     </div>
-                    <div class="about-badges">
-                        <span class="about-badge">HTML5</span>
-                        <span class="about-badge">CSS3</span>
-                        <span class="about-badge">Vanilla JS</span>
-                        <span class="about-badge">MathLive</span>
-                        <span class="about-badge">Math.js</span>
-                        <span class="about-badge">PWA</span>
+
+                    <!-- Security / Architecture -->
+                    <div>
+                        <div class="about-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            Security &amp; Architecture
+                        </div>
+                        <ul class="about-list">
+                            <li>SRI hashes on CDN scripts</li>
+                            <li>100% client-side, zero data sent</li>
+                            <li>Service Worker offline cache</li>
+                            <li>localStorage state persistence</li>
+                        </ul>
+                    </div>
+
+                    <!-- Features -->
+                    <div>
+                        <div class="about-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 11 12 14 22 4"></polyline>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                            Features
+                        </div>
+                        <ul class="about-list">
+                            <li>4 percentage calc types</li>
+                            <li>Standard + Scientific modes</li>
+                            <li>Memory (M+/MR/MC/M−)</li>
+                            <li>12 themes + dark mode</li>
+                            <li>Audit tape history</li>
+                            <li>Keyboard shortcuts</li>
+                        </ul>
+                    </div>
+
+                    <!-- Limitations -->
+                    <div>
+                        <div class="about-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            Limitations
+                        </div>
+                        <ul class="about-list about-list--warn">
+                            <li>No server, DB, or cloud sync</li>
+                            <li>Scientific mode needs internet</li>
+                            <li>IEEE 754 float precision</li>
+                            <li>No graphing or unit conversion</li>
+                        </ul>
                     </div>
                 </div>
 
-                <!-- Security / Architecture -->
-                <div>
-                    <div class="about-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
-                        Security &amp; Architecture
+                <!-- Developer Credit -->
+                <div class="about-developer">
+                    <img class="about-qr" src="frame.png" alt="QR code" />
+                    <div class="about-dev-info">
+                        <h4>Built by Danh Michael Mujar</h4>
+                        <p>Business Support Senior Specialist at WTW who believes numbers should be beautiful and tools
+                            should be transparent. Powered by curiosity, caffeine, and Generative AI.</p>
+                        <a class="about-linkedin" href="https://www.linkedin.com/in/danh-michael-mujar-599112210"
+                            target="_blank" rel="noopener noreferrer">Connect on LinkedIn <span>&rarr;</span></a>
                     </div>
-                    <ul class="about-list">
-                        <li>SRI hashes on CDN scripts</li>
-                        <li>100% client-side, zero data sent</li>
-                        <li>Service Worker offline cache</li>
-                        <li>localStorage state persistence</li>
-                    </ul>
-                </div>
-
-                <!-- Features -->
-                <div>
-                    <div class="about-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="9 11 12 14 22 4"></polyline>
-                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                        </svg>
-                        Features
-                    </div>
-                    <ul class="about-list">
-                        <li>4 percentage calc types</li>
-                        <li>Standard + Scientific modes</li>
-                        <li>Memory (M+/MR/MC/M−)</li>
-                        <li>12 themes + dark mode</li>
-                        <li>Audit tape history</li>
-                        <li>Keyboard shortcuts</li>
-                    </ul>
-                </div>
-
-                <!-- Limitations -->
-                <div>
-                    <div class="about-section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                        Limitations
-                    </div>
-                    <ul class="about-list about-list--warn">
-                        <li>No server, DB, or cloud sync</li>
-                        <li>Scientific mode needs internet</li>
-                        <li>IEEE 754 float precision</li>
-                        <li>No graphing or unit conversion</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Developer Credit -->
-            <div class="about-developer">
-                <img class="about-qr"
-                    src="data:image/png;base64,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/Fv4O/hv+m/0b/df8F/yb/Wv9N////L/mv++//V/2P/df8l/ov+y////yf+R////T/vP95/sv+L/77/t//R/8T///8t/xf/Ff4f/pP9P/4H/mP/L///+j/z3+F/+n/Uf/m/93/7f/G/6v/h/+W////U/8D/6b+I/4v/1f/v///E/6f/hf9j////V////j/xH/Uf6n/Uf+H/7r/wv+N/5n/5/9t///+1/+b/vf/E////r/wn/T/+//df8L/5///8p/rP+n/+7/8v+1//P///7fwv+B////L///+2/67/6f/X/+X/5P99/vP+X/8v/s/+S/yn+R////V//n/sf8S/yv+l/9f/6X/m/9D/7P/U////X/iv+//3f/C////C/8v/rf+Q///+D///+v/xf+v/9P/yf+j/yP+R/5P/U////P////K/7P/Q/6D/Mv4z/m//L/6T/0P+8/43/m//r/9v/+v/9////N///+z/6P/m////S////v/zT/tf+M/6L/Q//m////G////j/wX+m/7f/p////Q////v/7X/lP9p/wf/R/9X/uv/o////J/4n/hf+Z/zf/Y/7z/jv+P/9n/9///+E/4r/l/+5/8P/v/+//5v/p//+/+//N/9n/7//D/9r/9f/5//X/9v/5/+//yf+5/9D/s//W/8n/rP+Y/6D/vP9n////B/+F/z3/af8l/6r/j////Of8F/07/of/o////C////r/w/95/vv/p////H////v/wf/A/6H/Y////Hf8T/5v/0f+z/6T/of+A////S/7P/gf/E////P/5j/yf+c/9f/vf+m/9D/+f+t////I/5j/jP+d/+H/0f/Y/8z/uf+W/33/D////T/7D/sf+c/9X/y////F/6n/2v/W/7j/sv+L/8v/qf9z////E////R/7b/tv+T/0X+w////H/6///8Y////T/7z/lf+J/1H/h/+V/8f/yP++/9j/yf/N////R/6L/i/+E////f/iP9p/kP9c/6L/N////M////K/7P/kf+Z/6H/h/+Q/53/7f+z/9r/sf+M////S////N/9z/1P/H////F/6f/kP8y/z3/Of/L/63/yv/T/+n/9v/l/9b/yv+z/4b////V/8D/2v+r/6f/sf/S/8X/w////D/6H/p/+U/8T/qP/l/7z/rf/Y/9D/pv9X/7v/mf99////D/9X/rf+x/7r/y//L////D/6P/u//F////N/7//kf8r/nf/m/97/yn+c////S/7n/l//7/9v/xv+F/wn/V/+1/5n/zP/D/9r/v////N/7D/m////P////O////B/6v/Xf/N/8P/rv+g////D/6//S////P/7v/tf+r/7v/wf/N/8L/vf/R/8P/kf/Q/7P/nf+T////L/8j/tf+D/53/wP/G/7//kf///8X/if+P/8n/if///7r/uv///8X/1f/T/6D/2f/B////O////tf/L/8L/ov8y/zH/U/8t/tf+X/0H/y////M/6X/gf8f/g/+Z////O/9X///+D/4H/lP///yv+W////f/m////M////E////u////A////G/8b/6P///9T/2//j/+z////P////I/8z/3f///9T/uP+Y/8j/r/+U/7X/ov+Y/6P/nP+g/5//h/+K/6L/ov95/xj/Z/97/8n/ov+A////B////B/8d////F///+p/zP/U/+k/yf+H/2P/G/9F/xv/I/8T/1//S (the correct base64 image data) " />
-                <div class="about-dev-info">
-                    <h4>Built by Danh Michael Mujar</h4>
-                    <p>Business Support Senior Specialist at WTW who believes numbers should be beautiful and tools
-                        should be transparent. Powered by curiosity, caffeine, and Generative AI.</p>
-                    <a class="about-linkedin" href="https://www.linkedin.com/in/danh-michael-mujar-599112210"
-                        target="_blank" rel="noopener noreferrer">Connect on LinkedIn <span>&rarr;</span></a>
                 </div>
             </div>
         </div>
