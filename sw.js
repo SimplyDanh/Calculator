@@ -1,5 +1,5 @@
 // Service Worker — Percentage & Math Calculator PWA
-const CACHE_NAME = 'calc-v6';
+const CACHE_NAME = 'calc-v7';
 
 // App shell + critical CDN dependencies to pre-cache on install
 const PRECACHE_URLS = [
@@ -42,36 +42,50 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Fetch: cache-first, fall back to network, cache new requests on the fly
+// Fetch: hybrid strategy
+//  - Same-origin (your files): NETWORK-FIRST → always get latest, cache as offline fallback
+//  - CDN (fonts, mathlive, mathjs): CACHE-FIRST → they're version-pinned, no need to re-fetch
 self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) {
-                return cachedResponse;
-            }
+    const url = event.request.url;
+    const isOwnOrigin = url.startsWith(self.location.origin);
 
-            return fetch(event.request).then((networkResponse) => {
-                // Only cache GET requests from our origin or trusted CDNs
-                if (
-                    event.request.method === 'GET' &&
-                    (event.request.url.startsWith(self.location.origin) ||
-                        event.request.url.includes('fonts.googleapis.com') ||
-                        event.request.url.includes('fonts.gstatic.com') ||
-                        event.request.url.includes('unpkg.com') ||
-                        event.request.url.includes('cdnjs.cloudflare.com'))
-                ) {
-                    const responseClone = networkResponse.clone();
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseClone);
+    if (isOwnOrigin) {
+        // ── Network-first for own files ──
+        event.respondWith(
+            fetch(event.request)
+                .then((networkResponse) => {
+                    // Update cache with fresh copy
+                    if (event.request.method === 'GET') {
+                        const clone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+                    }
+                    return networkResponse;
+                })
+                .catch(() => {
+                    // Offline: serve from cache
+                    return caches.match(event.request).then((cached) => {
+                        if (cached) return cached;
+                        // Last resort: serve index.html for navigation requests
+                        if (event.request.mode === 'navigate') {
+                            return caches.match('./index.html');
+                        }
                     });
-                }
-                return networkResponse;
-            }).catch(() => {
-                // Offline fallback: if it's a navigation request, serve index.html
-                if (event.request.mode === 'navigate') {
-                    return caches.match('./index.html');
-                }
-            });
-        })
-    );
+                })
+        );
+    } else {
+        // ── Cache-first for CDN resources ──
+        event.respondWith(
+            caches.match(event.request).then((cachedResponse) => {
+                if (cachedResponse) return cachedResponse;
+
+                return fetch(event.request).then((networkResponse) => {
+                    if (event.request.method === 'GET') {
+                        const clone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+                    }
+                    return networkResponse;
+                });
+            })
+        );
+    }
 });
