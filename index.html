@@ -23,7 +23,7 @@
     <script defer src="https://unpkg.com/mathlive" crossorigin="anonymous"
         integrity="sha384-JjPSUCAu+59S/H2IC4UecZ4gllGbNCS++kBwHbsk0TKHCp2b6OqkZqsRC9Kch45U"></script>
     <!-- Math.js for evaluating scientific formulas -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js" crossorigin="anonymous"
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js" crossorigin="anonymous"
         integrity="sha384-2NnkIgIitZUPvVF20yEtYm3encP/kCjZ8nxchj4j7cbqmRi9jaVLYz/Pwn/ZgWQ6"></script>
     <style>
         :root {
@@ -646,7 +646,11 @@
         }
 
         .theme-switch input {
-            display: none;
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
         }
 
         .slider {
@@ -1643,23 +1647,7 @@
             gap: 0.5rem;
         }
 
-        /* Modal scrollbar */
-        .about-modal::-webkit-scrollbar {
-            width: 6px;
-        }
 
-        .about-modal::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .about-modal::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.12);
-            border-radius: 3px;
-        }
-
-        body.dark-theme .about-modal::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.12);
-        }
 
         /* Mobile responsive */
         @media (max-width: 600px) {
@@ -1670,8 +1658,11 @@
 
             .about-modal {
                 width: 96%;
-                padding: 1.5rem 1.25rem 1.25rem;
                 border-radius: 16px;
+            }
+
+            .about-modal-inner {
+                padding: 1.5rem 1.25rem 1.25rem;
             }
 
             .about-developer {
@@ -1689,6 +1680,10 @@
 </head>
 
 <body>
+    <noscript>
+        <p style="padding:2rem;text-align:center;font-family:sans-serif;">This application requires JavaScript to run.
+        </p>
+    </noscript>
 
     <div class="layout-container">
         <!-- Left Panel: Percentage Suite -->
@@ -2264,7 +2259,7 @@
                     const card = document.querySelector(`.calc-card[data-type="${type}"]`);
                     if (card) {
                         const container = card.querySelector('.calc-rows-container');
-                        container.innerHTML = '';
+                        container.replaceChildren();
                         if (state.cards[type].length === 0) {
                             container.appendChild(createRow(type));
                         } else {
@@ -2285,7 +2280,7 @@
                 if (state.sciRows && state.sciRows.length > 0) {
                     const sciWrapper = document.getElementById('sci-rows-wrapper');
                     if (sciWrapper) {
-                        sciWrapper.innerHTML = '';
+                        sciWrapper.replaceChildren();
                         state.sciRows.forEach((val, index) => {
                             addScientificRow();
                             setTimeout(() => {
