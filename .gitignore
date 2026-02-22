@@ -2,7 +2,7 @@
 .agent/
 
 # Screenshots
-screenshots/*.png
+*.png
 
 # System instructions (local)
 system_instructions.md
