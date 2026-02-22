@@ -949,11 +949,27 @@ if (window.location.protocol !== 'file:') {
     manifestLink.href = 'manifest.json';
     document.head.appendChild(manifestLink);
 
-    // 2. Register Service Worker
+    // 2. Register Service Worker with auto-update detection
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
-                .then((reg) => console.log('SW registered:', reg.scope))
+                .then((reg) => {
+                    console.log('SW registered:', reg.scope);
+
+                    // Listen for a new SW waiting to activate
+                    reg.addEventListener('updatefound', () => {
+                        const newWorker = reg.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', () => {
+                                // New SW is installed and waiting — reload to activate it
+                                if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                                    console.log('New version available — reloading.');
+                                    window.location.reload();
+                                }
+                            });
+                        }
+                    });
+                })
                 .catch((err) => console.warn('SW registration failed:', err));
         });
     }
