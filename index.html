@@ -8,6 +8,8 @@
     <meta name="description"
         content="Free online percentage calculator with interactive math tools, scientific mode via MathLive, and 12 beautiful themes including animated Aurora gradients. Instantly calculate percentages, perform arithmetic, and evaluate complex formulas.">
     <meta name="theme-color" content="#0052cc">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
@@ -16,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" crossorigin>
     <!-- MathLive for WYSIWYG Math Inputs -->
     <script defer src="https://unpkg.com/mathlive" crossorigin="anonymous"
         integrity="sha384-JjPSUCAu+59S/H2IC4UecZ4gllGbNCS++kBwHbsk0TKHCp2b6OqkZqsRC9Kch45U"></script>
@@ -1337,40 +1339,56 @@
             }
         }
 
-        /* --- About Button & Modal --- */
+        /* --- About Pill FAB & Glassmorphic Modal --- */
         .about-fab {
             position: fixed;
-            bottom: 1.25rem;
-            right: 1.25rem;
+            bottom: 1.5rem;
+            left: 1.5rem;
             z-index: 900;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 1px solid var(--border-color);
-            background: var(--panel-bg);
-            color: var(--text-secondary);
-            font-family: var(--font-sans);
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--shadow-md);
-            transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), color 0.2s var(--ease);
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: var(--text-secondary);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06);
+            transition: transform 0.25s var(--spring), box-shadow 0.25s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease);
         }
 
         .about-fab:hover {
-            transform: scale(1.1);
+            transform: translateY(-2px) scale(1.08);
             color: var(--primary-blue);
-            box-shadow: var(--shadow-lg);
+            background: rgba(255, 255, 255, 0.70);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08);
         }
 
+        body.dark-theme .about-fab {
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(30, 32, 40, 0.65);
+        }
+
+        body.dark-theme .about-fab:hover {
+            background: rgba(40, 42, 52, 0.80);
+        }
+
+        /* --- About Overlay --- */
         .about-overlay {
             position: fixed;
             inset: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1384,79 +1402,263 @@
             visibility: visible;
         }
 
+        /* --- About Modal Panel --- */
         .about-modal {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 520px;
-            width: 90%;
+            position: relative;
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 20px;
+            padding: 2rem 2rem 1.5rem;
+            max-width: 36rem;
+            width: 92%;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: var(--shadow-lg);
-            transform: translateY(20px) scale(0.97);
-            transition: transform 0.3s var(--spring);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transform: translateY(24px) scale(0.96);
+            transition: transform 0.35s var(--spring);
             color: var(--text-primary);
+        }
+
+        body.dark-theme .about-modal {
+            background: rgba(28, 30, 36, 0.82);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         .about-overlay.open .about-modal {
             transform: translateY(0) scale(1);
         }
 
-        .about-modal h2 {
-            margin: 0 0 0.25rem 0;
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .about-modal .about-version {
-            font-size: 0.75rem;
+        /* Close X button */
+        .about-close-x {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.06);
             color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s, transform 0.2s;
+        }
+
+        .about-close-x:hover {
+            background: rgba(0, 0, 0, 0.12);
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+
+        body.dark-theme .about-close-x {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        body.dark-theme .about-close-x:hover {
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        /* Header */
+        .about-modal .about-header {
             margin-bottom: 1rem;
+            padding-right: 2rem;
         }
 
-        .about-modal h3 {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--primary-blue);
-            margin: 1.25rem 0 0.4rem 0;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .about-modal .about-header h2 {
+            margin: 0 0 0.2rem 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
         }
 
-        .about-modal p,
-        .about-modal li {
-            font-size: 0.85rem;
+        .about-modal .about-intro {
+            font-size: 0.82rem;
             line-height: 1.6;
             color: var(--text-secondary);
+            margin: 0 0 1.25rem 0;
         }
 
-        .about-modal ul {
-            padding-left: 1.2rem;
+        /* 2-Column Grid */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem 1.5rem;
+        }
+
+        .about-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
+        }
+
+        .about-section-title svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            opacity: 0.8;
+        }
+
+        /* Tech badge pills */
+        .about-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .about-badge {
+            display: inline-block;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            background: rgba(0, 82, 204, 0.08);
+            color: var(--primary-blue);
+            border: 1px solid rgba(0, 82, 204, 0.15);
+            white-space: nowrap;
+        }
+
+        body.dark-theme .about-badge {
+            background: rgba(0, 82, 204, 0.15);
+            border-color: rgba(0, 82, 204, 0.25);
+        }
+
+        /* Section lists */
+        .about-list {
+            list-style: none;
+            padding: 0;
             margin: 0;
         }
 
-        .about-modal li {
+        .about-list li {
+            position: relative;
+            padding-left: 0.9rem;
+            font-size: 0.78rem;
+            line-height: 1.55;
+            color: var(--text-secondary);
             margin-bottom: 0.3rem;
         }
 
-        .about-modal .about-close {
-            display: block;
-            margin: 1.5rem auto 0;
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            border: none;
+        .about-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.55em;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
             background: var(--primary-blue);
-            color: #fff;
-            font-family: var(--font-sans);
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: background 0.2s var(--ease);
+            opacity: 0.5;
         }
 
-        .about-modal .about-close:hover {
-            background: var(--primary-hover);
+        .about-list.about-list--warn li::before {
+            background: #f59e0b;
+            opacity: 0.7;
+        }
+
+        /* Developer Credit */
+        .about-developer {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        body.dark-theme .about-developer {
+            border-top-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .about-qr {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .about-dev-info h4 {
+            margin: 0 0 0.3rem 0;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .about-dev-info p {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.72rem;
+            line-height: 1.55;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .about-linkedin {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            text-decoration: none;
+            transition: color 0.2s, gap 0.2s;
+        }
+
+        .about-linkedin:hover {
+            color: var(--primary-hover);
+            gap: 0.5rem;
+        }
+
+        /* Modal scrollbar */
+        .about-modal::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .about-modal::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .about-modal::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.12);
+            border-radius: 3px;
+        }
+
+        body.dark-theme .about-modal::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 600px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .about-modal {
+                width: 96%;
+                padding: 1.5rem 1.25rem 1.25rem;
+                border-radius: 16px;
+            }
+
+            .about-developer {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .about-fab {
+                bottom: 1rem;
+                left: 1rem;
+            }
         }
     </style>
 </head>
@@ -1513,7 +1715,7 @@
                     style="display: flex; align-items: flex-start; justify-content: flex-end; margin-bottom: auto; padding-top: 0.25rem;">
 
                     <div class="theme-dropdown" id="theme-dropdown-container">
-                        <button class="icon-btn" title="Choose Color Theme" onclick="togglePaletteDropdown(event)"
+                        <button class="icon-btn" id="palette-toggle-btn" title="Choose Color Theme"
                             style="padding: 0.25rem 0.5rem; background: transparent; border: none;">
                             <svg class="anim-bounce-hover" viewBox="0 0 24 24" fill="none">
                                 <path fill="#e2e8f0"
@@ -1530,49 +1732,46 @@
                         <!-- 2026 Color Palette Picker -->
                         <div class="theme-picker">
                             <!-- Masculine / General -->
-                            <button class="theme-swatch active" style="background-color: #0052cc;"
-                                onclick="setThemeColor(this, '')" title="Financial Blue (Default)"></button>
-                            <button class="theme-swatch" style="background-color: #0A7A7A;"
-                                onclick="setThemeColor(this, 'theme-teal')" title="Transformative Teal"></button>
+                            <button class="theme-swatch active" style="background-color: #0052cc;" data-theme=""
+                                title="Financial Blue (Default)"></button>
+                            <button class="theme-swatch" style="background-color: #0A7A7A;" data-theme="theme-teal"
+                                title="Transformative Teal"></button>
                             <button class="theme-swatch" style="background-color: #C15C3D;"
-                                onclick="setThemeColor(this, 'theme-terracotta')" title="Deep Terracotta"></button>
-                            <button class="theme-swatch" style="background-color: #3E7153;"
-                                onclick="setThemeColor(this, 'theme-forest')" title="Forest Green"></button>
-                            <button class="theme-swatch" style="background-color: #475569;"
-                                onclick="setThemeColor(this, 'theme-slate')" title="Slate Graphite"></button>
+                                data-theme="theme-terracotta" title="Deep Terracotta"></button>
+                            <button class="theme-swatch" style="background-color: #3E7153;" data-theme="theme-forest"
+                                title="Forest Green"></button>
+                            <button class="theme-swatch" style="background-color: #475569;" data-theme="theme-slate"
+                                title="Slate Graphite"></button>
 
                             <!-- Feminine -->
                             <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 4px;">
                             </div>
-                            <button class="theme-swatch" style="background-color: #B86B77;"
-                                onclick="setThemeColor(this, 'theme-rosewood')" title="Dusty Rosewood"></button>
-                            <button class="theme-swatch" style="background-color: #8CBA92;"
-                                onclick="setThemeColor(this, 'theme-pistachio')" title="Pale Pistachio"></button>
-                            <button class="theme-swatch" style="background-color: #7C3AED;"
-                                onclick="setThemeColor(this, 'theme-purple')" title="Royal Purple"></button>
+                            <button class="theme-swatch" style="background-color: #B86B77;" data-theme="theme-rosewood"
+                                title="Dusty Rosewood"></button>
+                            <button class="theme-swatch" style="background-color: #8CBA92;" data-theme="theme-pistachio"
+                                title="Pale Pistachio"></button>
+                            <button class="theme-swatch" style="background-color: #7C3AED;" data-theme="theme-purple"
+                                title="Royal Purple"></button>
 
                             <!-- Animated Aurora Themes -->
                             <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 4px;">
                             </div>
                             <button class="theme-swatch" style="background: conic-gradient(#0ea5e9, #084c61, #0a3a5c);"
-                                onclick="setThemeColor(this, 'theme-aurora-ocean')"
-                                title="Oceanic Aurora (Masculine)"></button>
+                                data-theme="theme-aurora-ocean" title="Oceanic Aurora (Masculine)"></button>
                             <button class="theme-swatch" style="background: conic-gradient(#10b981, #064e3b, #0f172a);"
-                                onclick="setThemeColor(this, 'theme-aurora-cyber')"
-                                title="Cyber Neon (Masculine)"></button>
+                                data-theme="theme-aurora-cyber" title="Cyber Neon (Masculine)"></button>
                             <div style="width: 1px; height: 16px; background: var(--border-color); margin: 0 4px;">
                             </div>
                             <button class="theme-swatch" style="background: conic-gradient(#d946ef, #4b1d52, #0d2847);"
-                                onclick="setThemeColor(this, 'theme-aurora')" title="Cosmic Aurora (Feminine)"></button>
+                                data-theme="theme-aurora" title="Cosmic Aurora (Feminine)"></button>
                             <button class="theme-swatch" style="background: conic-gradient(#fb923c, #7c2d12, #831843);"
-                                onclick="setThemeColor(this, 'theme-aurora-sunset')"
-                                title="Sunset Aurora (Feminine)"></button>
+                                data-theme="theme-aurora-sunset" title="Sunset Aurora (Feminine)"></button>
                         </div>
                     </div>
 
                     <div class="theme-switch-wrapper">
                         <label class="theme-switch" for="checkbox">
-                            <input type="checkbox" id="checkbox" onchange="toggleTheme()" />
+                            <input type="checkbox" id="checkbox" />
                             <div class="slider">
                                 <div class="slider-bg">
                                     <div class="slider-bg-day">
@@ -1642,7 +1841,7 @@
             <div class="calc-card" data-type="type1">
                 <div class="card-header-wrapper">
                     <h2>X is what % of Y</h2>
-                    <button class="add-row-btn" onclick="addRow(this, 'type1')">
+                    <button class="add-row-btn" data-add-row="type1">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -1660,7 +1859,7 @@
             <div class="calc-card" data-type="type2">
                 <div class="card-header-wrapper">
                     <h2>What is X% of Y</h2>
-                    <button class="add-row-btn" onclick="addRow(this, 'type2')">
+                    <button class="add-row-btn" data-add-row="type2">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -1677,7 +1876,7 @@
             <div class="calc-card" data-type="type3">
                 <div class="card-header-wrapper">
                     <h2>Percentage change from X to Y</h2>
-                    <button class="add-row-btn" onclick="addRow(this, 'type3')">
+                    <button class="add-row-btn" data-add-row="type3">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -1694,7 +1893,7 @@
             <div class="calc-card" data-type="type4">
                 <div class="card-header-wrapper">
                     <h2>X is P% of what?</h2>
-                    <button class="add-row-btn" onclick="addRow(this, 'type4')">
+                    <button class="add-row-btn" data-add-row="type4">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -1716,12 +1915,12 @@
                 <h2>Calculator</h2>
 
                 <div class="mode-toggle">
-                    <button class="toggle-btn active" id="btn-mode-std" onclick="setCalcMode('standard')">STD</button>
-                    <button class="toggle-btn" id="btn-mode-sci" onclick="setCalcMode('scientific')">SCI</button>
+                    <button class="toggle-btn active" id="btn-mode-std" data-mode="standard">STD</button>
+                    <button class="toggle-btn" id="btn-mode-sci" data-mode="scientific">SCI</button>
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <button class="icon-btn" onclick="toggleHistory()" title="History">
+                    <button class="icon-btn" id="history-toggle-btn" title="History">
                         <svg class="anim-wiggle-hover" viewBox="0 0 24 24" fill="none">
                             <circle cx="12" cy="12" r="10" fill="#e0e7ff" stroke="#6366f1" stroke-width="2"></circle>
                             <polyline points="12 6 12 12 16 14" stroke="#4338ca" stroke-width="2" stroke-linecap="round"
@@ -1729,7 +1928,7 @@
                             <circle cx="12" cy="12" r="1.5" fill="#4338ca"></circle>
                         </svg>
                     </button>
-                    <button class="close-drawer icon-btn" onclick="toggleDrawer()">
+                    <button class="close-drawer icon-btn" id="close-drawer-btn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1749,7 +1948,7 @@
                 <div id="sci-rows-wrapper">
                     <!-- Rows injected here -->
                 </div>
-                <button class="add-math-btn" onclick="addScientificRow()">
+                <button class="add-math-btn" id="add-math-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -1759,41 +1958,41 @@
                 </button>
             </div>
 
-            <div class="calc-keypad">
-                <button class="calc-btn op" onclick="calcMemory('MC')">MC</button>
-                <button class="calc-btn op" onclick="calcMemory('MR')">MR</button>
-                <button class="calc-btn op" onclick="calcMemory('M-')">M-</button>
-                <button class="calc-btn op" onclick="calcMemory('M+')">M+</button>
+            <div class="calc-keypad" id="calc-keypad">
+                <button class="calc-btn op" data-action="memory" data-value="MC">MC</button>
+                <button class="calc-btn op" data-action="memory" data-value="MR">MR</button>
+                <button class="calc-btn op" data-action="memory" data-value="M-">M-</button>
+                <button class="calc-btn op" data-action="memory" data-value="M+">M+</button>
 
-                <button class="calc-btn op" onclick="calcAction('clear')">C</button>
-                <button class="calc-btn op" onclick="calcAction('backspace')">⌫</button>
-                <button class="calc-btn op" onclick="calcPercentage()">%</button>
-                <button class="calc-btn op" onclick="calcOperation('/')">÷</button>
+                <button class="calc-btn op" data-action="clear">C</button>
+                <button class="calc-btn op" data-action="backspace">⌫</button>
+                <button class="calc-btn op" data-action="percent">%</button>
+                <button class="calc-btn op" data-action="op" data-value="/">÷</button>
 
-                <button class="calc-btn num" onclick="calcDigit('7')">7</button>
-                <button class="calc-btn num" onclick="calcDigit('8')">8</button>
-                <button class="calc-btn num" onclick="calcDigit('9')">9</button>
-                <button class="calc-btn op" onclick="calcOperation('*')">×</button>
+                <button class="calc-btn num" data-action="digit" data-value="7">7</button>
+                <button class="calc-btn num" data-action="digit" data-value="8">8</button>
+                <button class="calc-btn num" data-action="digit" data-value="9">9</button>
+                <button class="calc-btn op" data-action="op" data-value="*">×</button>
 
-                <button class="calc-btn num" onclick="calcDigit('4')">4</button>
-                <button class="calc-btn num" onclick="calcDigit('5')">5</button>
-                <button class="calc-btn num" onclick="calcDigit('6')">6</button>
-                <button class="calc-btn op" onclick="calcOperation('-')">−</button>
+                <button class="calc-btn num" data-action="digit" data-value="4">4</button>
+                <button class="calc-btn num" data-action="digit" data-value="5">5</button>
+                <button class="calc-btn num" data-action="digit" data-value="6">6</button>
+                <button class="calc-btn op" data-action="op" data-value="-">−</button>
 
-                <button class="calc-btn num" onclick="calcDigit('1')">1</button>
-                <button class="calc-btn num" onclick="calcDigit('2')">2</button>
-                <button class="calc-btn num" onclick="calcDigit('3')">3</button>
-                <button class="calc-btn op" onclick="calcOperation('+')">+</button>
+                <button class="calc-btn num" data-action="digit" data-value="1">1</button>
+                <button class="calc-btn num" data-action="digit" data-value="2">2</button>
+                <button class="calc-btn num" data-action="digit" data-value="3">3</button>
+                <button class="calc-btn op" data-action="op" data-value="+">+</button>
 
-                <button class="calc-btn num" onclick="calcDigit('0')">0</button>
-                <button class="calc-btn num" onclick="calcDigit('.')">.</button>
-                <button class="calc-btn eq" onclick="calcEquals()">=</button>
+                <button class="calc-btn num" data-action="digit" data-value="0">0</button>
+                <button class="calc-btn num" data-action="digit" data-value=".">.</button>
+                <button class="calc-btn eq" data-action="equals">=</button>
             </div>
 
             <div class="audit-tape-container" id="history-drawer">
                 <div class="audit-header">
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <button class="icon-btn" onclick="toggleHistory()" title="Back">
+                        <button class="icon-btn" id="history-back-btn" title="Back">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="15 18 9 12 15 6"></polyline>
@@ -1801,7 +2000,7 @@
                         </button>
                         <span>History</span>
                     </div>
-                    <button class="icon-btn" onclick="clearAuditTape()" title="Clear Tape">
+                    <button class="icon-btn" id="clear-tape-btn" title="Clear Tape">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="3 6 5 6 21 6"></polyline>
@@ -1818,7 +2017,7 @@
     </div>
 
     <!-- Mobile Toggle FAB -->
-    <button class="mobile-toggle" onclick="toggleDrawer()">
+    <button class="mobile-toggle" id="mobile-toggle-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
             stroke-linejoin="round">
             <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
@@ -1913,18 +2112,26 @@
                 <div class="result-group">
                     <span>Result:</span>
                     <span class="result-value" id="${uniqueId}">${(type === 'type1' || type === 'type3') ? '0.00%' : '0.00'}</span>
-                    <button class="icon-btn" onclick="copyResult('${uniqueId}')" title="Copy to clipboard">
+                    <button class="icon-btn copy-row-btn" title="Copy to clipboard" aria-label="Copy result">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
                     </button>
-                    <button class="icon-btn delete-row-btn" onclick="deleteRow(this)" title="Delete Row">
+                    <button class="icon-btn delete-row-btn" title="Delete Row" aria-label="Delete row">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
             `;
+
+            // Bind copy and delete via addEventListener (no inline onclick)
+            container.querySelector('.copy-row-btn').addEventListener('click', function () {
+                copyResult(uniqueId);
+            });
+            container.querySelector('.delete-row-btn').addEventListener('click', function () {
+                deleteRow(this);
+            });
 
             // Setup listeners
             const xInput = container.querySelector('.val-x');
@@ -1962,6 +2169,9 @@
         }
 
         /* --- State Persistence (localStorage) --- */
+        // In-memory store for structured audit entries (used for safe save/restore)
+        let auditEntries = [];
+
         function saveState() {
             const state = {
                 theme: Array.from(document.body.classList).find(c => c.startsWith('theme-')) || '',
@@ -1969,7 +2179,7 @@
                 mode: document.body.classList.contains('scientific-mode') ? 'scientific' : 'standard',
                 cards: {},
                 sciRows: [],
-                auditHtml: document.getElementById('audit-list').innerHTML
+                auditData: auditEntries
             };
 
             document.querySelectorAll('.calc-card').forEach(card => {
@@ -2005,16 +2215,23 @@
                 if (checkbox) checkbox.checked = state.darkMode;
 
                 if (state.theme) {
-                    const btn = Array.from(document.querySelectorAll('.theme-swatch')).find(b => b.getAttribute('onclick').includes(state.theme));
+                    const btn = document.querySelector('.theme-swatch[data-theme="' + state.theme + '"]');
                     if (btn) setThemeColor(btn, state.theme);
                 }
 
                 // Restore Mode
                 if (state.mode === 'scientific') setCalcMode('scientific');
 
-                // Restore Audit Tape
-                if (state.auditHtml) {
-                    document.getElementById('audit-list').innerHTML = state.auditHtml;
+                // Restore Audit Tape from structured data (safe — no innerHTML)
+                if (state.auditData && Array.isArray(state.auditData)) {
+                    // Rebuild entries in reverse so prepend order matches original
+                    state.auditData.slice().reverse().forEach(entry => {
+                        if (typeof entry.a === 'number' && typeof entry.b === 'number' &&
+                            typeof entry.op === 'string' && typeof entry.res === 'number' &&
+                            isFinite(entry.a) && isFinite(entry.b) && isFinite(entry.res)) {
+                            addAuditEntry(entry.a, entry.b, entry.op, entry.res);
+                        }
+                    });
                 }
 
                 // Restore Percentage Cards
@@ -2123,51 +2340,15 @@
         const previewEl = document.getElementById('main-calc-prev');
         const auditList = document.getElementById('audit-list');
 
-        let displayedCalcValue = 0; // Ticker state
-        let countUpAnimationId = null;
-
         function updateDisplay() {
             let hasDot = calcState.currentValue.endsWith('.');
             let targetVal = parseFloat(calcState.currentValue);
             if (isNaN(targetVal)) targetVal = 0;
 
-            // --- Enhancement 2: Number Ticker Animation ---
-            if (countUpAnimationId) cancelAnimationFrame(countUpAnimationId);
-
-            const startVal = displayedCalcValue;
-            const duration = 250; // ms
-            let startTime = null;
-
-            // Only animate the jump if not actively typing digits
-            const isTyping = calcState.resetNext === false;
-
-            if (isTyping || targetVal === startVal) {
-                // Instant update
-                displayedCalcValue = targetVal;
-                let formatted = proFormatter.format(targetVal);
-                if (hasDot) formatted += '.';
-                displayEl.textContent = formatted;
-            } else {
-                // Animate to new value
-                const step = (timestamp) => {
-                    if (!startTime) startTime = timestamp;
-                    const progress = Math.min((timestamp - startTime) / duration, 1);
-                    // easeOutExpo function
-                    const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-                    const currentVal = startVal + (targetVal - startVal) * ease;
-
-                    let formatted = proFormatter.format(currentVal);
-                    if (hasDot && progress === 1) formatted += '.';
-                    displayEl.textContent = formatted;
-
-                    if (progress < 1) {
-                        countUpAnimationId = requestAnimationFrame(step);
-                    } else {
-                        displayedCalcValue = targetVal;
-                    }
-                };
-                countUpAnimationId = requestAnimationFrame(step);
-            }
+            // Instant update
+            let formatted = proFormatter.format(targetVal);
+            if (hasDot) formatted += '.';
+            displayEl.textContent = formatted;
 
             if (calcState.previousValue !== null && calcState.operator) {
                 let opStr = calcState.operator;
@@ -2185,6 +2366,9 @@
                 calcState.currentValue = digit;
                 calcState.resetNext = false;
             } else {
+                // Input length guard — prevent overflow from unlimited digit entry
+                if (calcState.currentValue.replace(/[^0-9]/g, '').length >= 15) return;
+
                 if (digit === '.') {
                     if (!calcState.currentValue.includes('.')) {
                         calcState.currentValue += '.';
@@ -2258,13 +2442,23 @@
         function calculateInternal(a, b, op) {
             a = parseFloat(a);
             b = parseFloat(b);
+            let result;
             switch (op) {
-                case '+': return a + b;
-                case '-': return a - b;
-                case '*': return a * b;
-                case '/': return b !== 0 ? a / b : 0;
+                case '+': result = a + b; break;
+                case '-': result = a - b; break;
+                case '*': result = a * b; break;
+                case '/':
+                    if (b === 0) {
+                        showToast('Cannot divide by zero');
+                        return null;
+                    }
+                    result = a / b;
+                    break;
+                default: result = b;
             }
-            return b;
+            // Guard against Infinity and NaN
+            if (!isFinite(result)) return 0;
+            return result;
         }
 
         function calcOperation(op) {
@@ -2283,6 +2477,9 @@
                 const prevNum = calcState.previousValue;
                 const result = calculateInternal(prevNum, currentNum, calcState.operator);
 
+                // Division by zero returns null — abort without changing state
+                if (result === null) return;
+
                 if (logHistory) {
                     addAuditEntry(prevNum, currentNum, calcState.operator, result);
                 }
@@ -2296,37 +2493,92 @@
         }
 
         function addAuditEntry(a, b, op, res) {
+            // Track structured data for safe persistence
+            auditEntries.unshift({ a: a, b: b, op: op, res: res });
+
             let opStr = op;
             if (opStr === '*') opStr = '×';
             if (opStr === '/') opStr = '÷';
             if (opStr === '-') opStr = '−';
 
-            const equation = `${proFormatter.format(a)} ${opStr} ${proFormatter.format(b)}`;
+            const equation = proFormatter.format(a) + ' ' + opStr + ' ' + proFormatter.format(b);
             const resultFormat = proFormatter.format(res);
 
+            // Build DOM safely — no innerHTML, no inline onclick
             const li = document.createElement('li');
             li.className = 'audit-item';
 
-            // Generate a unique ID for copying
-            const uniqueId = 'audit-res-' + Date.now() + Math.floor(Math.random() * 1000);
+            const eqDiv = document.createElement('div');
+            eqDiv.className = 'audit-equation';
+            eqDiv.textContent = equation + ' =';
 
-            li.innerHTML = `
-                <div class="audit-equation">${equation} =</div>
-                <div class="audit-result-row">
-                    <div class="audit-actions">
-                        <button class="btn-use" onclick="useAuditValue(${res})">Use</button>
-                        <button class="icon-btn" onclick="copyResult('${uniqueId}', '${resultFormat}')" title="Copy">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        </button>
-                    </div>
-                    <div class="audit-result" id="${uniqueId}">${resultFormat}</div>
-                </div>
-            `;
+            const resultRow = document.createElement('div');
+            resultRow.className = 'audit-result-row';
+
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'audit-actions';
+
+            // "Use" button — addEventListener instead of inline onclick
+            const useBtn = document.createElement('button');
+            useBtn.className = 'btn-use';
+            useBtn.textContent = 'Use';
+            useBtn.addEventListener('click', function () {
+                useAuditValue(res);
+            });
+
+            // "Copy" button — addEventListener instead of inline onclick
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'icon-btn';
+            copyBtn.title = 'Copy';
+            copyBtn.setAttribute('aria-label', 'Copy result');
+            const copySvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            copySvg.setAttribute('width', '14');
+            copySvg.setAttribute('height', '14');
+            copySvg.setAttribute('viewBox', '0 0 24 24');
+            copySvg.setAttribute('fill', 'none');
+            copySvg.setAttribute('stroke', 'currentColor');
+            copySvg.setAttribute('stroke-width', '2');
+            copySvg.setAttribute('stroke-linecap', 'round');
+            copySvg.setAttribute('stroke-linejoin', 'round');
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', '9'); rect.setAttribute('y', '9');
+            rect.setAttribute('width', '13'); rect.setAttribute('height', '13');
+            rect.setAttribute('rx', '2'); rect.setAttribute('ry', '2');
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1');
+            copySvg.appendChild(rect);
+            copySvg.appendChild(path);
+            copyBtn.appendChild(copySvg);
+            copyBtn.addEventListener('click', function () {
+                const rawValue = resultFormat.replace(/[%,]/g, '');
+                if (rawValue) {
+                    navigator.clipboard.writeText(rawValue).then(function () {
+                        showToast('Copied to clipboard!');
+                    }).catch(function () {
+                        showToast('Copy failed');
+                    });
+                }
+            });
+
+            actionsDiv.appendChild(useBtn);
+            actionsDiv.appendChild(copyBtn);
+
+            const resDiv = document.createElement('div');
+            resDiv.className = 'audit-result';
+            resDiv.textContent = resultFormat;
+
+            resultRow.appendChild(actionsDiv);
+            resultRow.appendChild(resDiv);
+
+            li.appendChild(eqDiv);
+            li.appendChild(resultRow);
+
             auditList.prepend(li);
         }
 
         function clearAuditTape() {
-            auditList.innerHTML = '';
+            auditList.textContent = '';
+            auditEntries = [];
         }
 
         function useAuditValue(val) {
@@ -2343,18 +2595,26 @@
 
         /* --- Utility functions --- */
 
-        function copyResult(elementId, hardcodedValue = null) {
-            let textToCopy = hardcodedValue;
-            if (!textToCopy) {
+        function copyResult(elementId, hardcodedValue, isMathRow) {
+            let textToCopy;
+            if (isMathRow) {
+                // Scientific mode: strip the "= " prefix
                 const el = document.getElementById(elementId);
-                if (el) textToCopy = el.textContent.replace(/[%,]/g, ''); // Strip % and commas for raw clipboard number
+                if (el) {
+                    textToCopy = el.textContent.replace('=', '').trim().replace(/[%,]/g, '');
+                }
+            } else if (hardcodedValue) {
+                textToCopy = hardcodedValue.replace(/[%,]/g, '');
             } else {
-                textToCopy = textToCopy.replace(/[%,]/g, '');
+                const el = document.getElementById(elementId);
+                if (el) textToCopy = el.textContent.replace(/[%,]/g, '');
             }
 
             if (textToCopy) {
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    showToast("Copied to clipboard!");
+                navigator.clipboard.writeText(textToCopy).then(function () {
+                    showToast('Copied to clipboard!');
+                }).catch(function () {
+                    showToast('Copy failed');
                 });
             }
         }
@@ -2395,6 +2655,72 @@
             if (event) event.stopPropagation();
             document.getElementById('theme-dropdown-container').classList.toggle('active');
         }
+
+        /* === Centralized Event Bindings === */
+        // Replaces all inline onclick/onchange handlers for CSP compliance
+        (function bindEvents() {
+            // --- Calculator Keypad (event delegation) ---
+            document.getElementById('calc-keypad').addEventListener('click', function (e) {
+                var btn = e.target.closest('[data-action]');
+                if (!btn) return;
+                var action = btn.getAttribute('data-action');
+                var value = btn.getAttribute('data-value');
+                switch (action) {
+                    case 'digit': calcDigit(value); break;
+                    case 'op': calcOperation(value); break;
+                    case 'memory': calcMemory(value); break;
+                    case 'clear': calcAction('clear'); break;
+                    case 'backspace': calcAction('backspace'); break;
+                    case 'percent': calcPercentage(); break;
+                    case 'equals': calcEquals(); break;
+                }
+            });
+
+            // --- Theme Swatches (event delegation) ---
+            document.querySelector('.theme-picker').addEventListener('click', function (e) {
+                var swatch = e.target.closest('.theme-swatch');
+                if (!swatch) return;
+                setThemeColor(swatch, swatch.getAttribute('data-theme'));
+            });
+
+            // --- Palette toggle ---
+            document.getElementById('palette-toggle-btn').addEventListener('click', function (e) {
+                togglePaletteDropdown(e);
+            });
+
+            // --- Dark mode toggle ---
+            document.getElementById('checkbox').addEventListener('change', toggleTheme);
+
+            // --- Add Row buttons (event delegation) ---
+            document.querySelectorAll('[data-add-row]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    addRow(btn, btn.getAttribute('data-add-row'));
+                });
+            });
+
+            // --- Mode toggle buttons ---
+            document.querySelectorAll('[data-mode]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    setCalcMode(btn.getAttribute('data-mode'));
+                });
+            });
+
+            // --- History toggle ---
+            document.getElementById('history-toggle-btn').addEventListener('click', toggleHistory);
+            document.getElementById('history-back-btn').addEventListener('click', toggleHistory);
+
+            // --- Clear audit tape ---
+            document.getElementById('clear-tape-btn').addEventListener('click', clearAuditTape);
+
+            // --- Drawer close ---
+            document.getElementById('close-drawer-btn').addEventListener('click', toggleDrawer);
+
+            // --- Mobile toggle ---
+            document.getElementById('mobile-toggle-btn').addEventListener('click', toggleDrawer);
+
+            // --- Add scientific row ---
+            document.getElementById('add-math-btn').addEventListener('click', addScientificRow);
+        })();
 
         // Close dropdown when clicking outside
         document.addEventListener('click', (event) => {
@@ -2487,23 +2813,70 @@
 
             const uniqueId = 'math-res-' + Math.random().toString(36).substring(2, 9);
 
-            row.innerHTML = `
-                <math-field virtual-keyboard-mode="manual"></math-field>
-                <div class="math-actions">
-                    <span class="math-result" id="${uniqueId}" aria-live="polite">= </span>
-                    <button class="icon-btn" onclick="copyResult('${uniqueId}', null, true)" title="Copy Result">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    </button>
-                    <button class="icon-btn delete-row-btn" onclick="this.closest('.math-row').remove()" title="Delete">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                </div>
-            `;
+            // Build math-field element
+            const mf = document.createElement('math-field');
+            mf.setAttribute('virtual-keyboard-mode', 'manual');
+
+            // Build actions container
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'math-actions';
+
+            const resEl = document.createElement('span');
+            resEl.className = 'math-result';
+            resEl.id = uniqueId;
+            resEl.setAttribute('aria-live', 'polite');
+            resEl.textContent = '= ';
+
+            // Copy button — addEventListener instead of inline onclick
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'icon-btn';
+            copyBtn.title = 'Copy Result';
+            copyBtn.setAttribute('aria-label', 'Copy result');
+            const copySvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            copySvg.setAttribute('width', '16'); copySvg.setAttribute('height', '16');
+            copySvg.setAttribute('viewBox', '0 0 24 24'); copySvg.setAttribute('fill', 'none');
+            copySvg.setAttribute('stroke', 'currentColor'); copySvg.setAttribute('stroke-width', '2');
+            copySvg.setAttribute('stroke-linecap', 'round'); copySvg.setAttribute('stroke-linejoin', 'round');
+            var r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            r.setAttribute('x', '9'); r.setAttribute('y', '9');
+            r.setAttribute('width', '13'); r.setAttribute('height', '13');
+            r.setAttribute('rx', '2'); r.setAttribute('ry', '2');
+            var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            p.setAttribute('d', 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1');
+            copySvg.appendChild(r); copySvg.appendChild(p);
+            copyBtn.appendChild(copySvg);
+            copyBtn.addEventListener('click', function () {
+                copyResult(uniqueId, null, true);
+            });
+
+            // Delete button — addEventListener instead of inline onclick
+            const delBtn = document.createElement('button');
+            delBtn.className = 'icon-btn delete-row-btn';
+            delBtn.title = 'Delete';
+            delBtn.setAttribute('aria-label', 'Delete row');
+            const delSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            delSvg.setAttribute('width', '16'); delSvg.setAttribute('height', '16');
+            delSvg.setAttribute('viewBox', '0 0 24 24'); delSvg.setAttribute('fill', 'none');
+            delSvg.setAttribute('stroke', 'currentColor'); delSvg.setAttribute('stroke-width', '2');
+            delSvg.setAttribute('stroke-linecap', 'round'); delSvg.setAttribute('stroke-linejoin', 'round');
+            var l1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            l1.setAttribute('x1', '18'); l1.setAttribute('y1', '6'); l1.setAttribute('x2', '6'); l1.setAttribute('y2', '18');
+            var l2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            l2.setAttribute('x1', '6'); l2.setAttribute('y1', '6'); l2.setAttribute('x2', '18'); l2.setAttribute('y2', '18');
+            delSvg.appendChild(l1); delSvg.appendChild(l2);
+            delBtn.appendChild(delSvg);
+            delBtn.addEventListener('click', function () {
+                row.remove();
+            });
+
+            actionsDiv.appendChild(resEl);
+            actionsDiv.appendChild(copyBtn);
+            actionsDiv.appendChild(delBtn);
+
+            row.appendChild(mf);
+            row.appendChild(actionsDiv);
 
             wrapper.appendChild(row);
-
-            const mf = row.querySelector('math-field');
-            const resEl = row.querySelector('.math-result');
 
             mf.addEventListener('focus', () => {
                 document.querySelectorAll('math-field').forEach(f => f.classList.remove('last-focused'));
@@ -2539,22 +2912,7 @@
             mf.focus();
         }
 
-        /* Update copyResult to handle math-field special striping */
-        const originalCopyResult = copyResult;
-        copyResult = function (elementId, hardcodedValue = null, isMathRow = false) {
-            if (isMathRow) {
-                const el = document.getElementById(elementId);
-                if (el) {
-                    let text = el.textContent.replace('=', '').trim(); // Remove the equals sign before copy
-                    text = text.replace(/[%,]/g, '');
-                    if (text) {
-                        navigator.clipboard.writeText(text).then(() => showToast("Copied to clipboard!"));
-                    }
-                }
-            } else {
-                originalCopyResult(elementId, hardcodedValue);
-            }
-        };
+        /* copyResult is now a unified function — no monkey-patching needed */
 
         // Ensure MathLive virtual keyboard doesn't steal focus from the input field
         window.addEventListener('DOMContentLoaded', () => {
@@ -2612,56 +2970,191 @@
     </script>
 
     <!-- About FAB Button -->
-    <button class="about-fab" onclick="document.getElementById('about-overlay').classList.add('open')"
-        title="About this app" aria-label="About this app">?</button>
+    <button class="about-fab" id="about-fab-btn" title="About this app" aria-label="About this app">?</button>
 
     <!-- About Modal Overlay -->
-    <div class="about-overlay" id="about-overlay" onclick="if(event.target===this) this.classList.remove('open')">
+    <div class="about-overlay" id="about-overlay" role="dialog" aria-modal="true" aria-labelledby="about-heading"
+        aria-hidden="true">
         <div class="about-modal">
-            <h2>Percentage &amp; Math Calculator</h2>
-            <p class="about-version">v2.0 &bull; Progressive Web App</p>
+            <!-- Close X -->
+            <button class="about-close-x" id="about-close-x" title="Close" aria-label="Close about dialog">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
 
-            <h3>What It Does</h3>
-            <p>A comprehensive calculator that combines percentage calculation tools with a full-featured standard and
-                scientific calculator. Includes real-time percentage computations, an interactive keypad with memory
-                functions, a scientific mode powered by MathLive (WYSIWYG math input) and Math.js expression evaluation,
-                and a full audit tape history.</p>
+            <!-- Header -->
+            <div class="about-header">
+                <h2 id="about-heading">About Percentage &amp; Math Calculator</h2>
+            </div>
 
-            <h3>Languages &amp; Technologies</h3>
-            <ul>
-                <li><strong>HTML5</strong> &mdash; Semantic structure with accessibility markup (ARIA live regions,
-                    focus management)</li>
-                <li><strong>CSS3</strong> &mdash; 12 color themes (8 solid + 4 animated Aurora gradients), Neumorphic
-                    soft-UI buttons, Glassmorphism panels, responsive layout, dark mode</li>
-                <li><strong>Vanilla JavaScript</strong> &mdash; No build tools or frameworks; all logic in a single file
-                </li>
-                <li><strong>MathLive</strong> &mdash; WYSIWYG math field with virtual keyboard (CDN)</li>
-                <li><strong>Math.js</strong> &mdash; Safe expression evaluation for scientific formulas (CDN)</li>
-            </ul>
+            <!-- Introduction -->
+            <p class="about-intro">A comprehensive PWA that combines percentage calculations, a full standard &amp;
+                scientific calculator with MathLive WYSIWYG input, 12 themes, and an audit tape — all running
+                client-side with zero dependencies on a server.</p>
 
-            <h3>Scope</h3>
-            <ul>
-                <li>Percentage calculations: "X% of Y", "X is what % of Y", "X is Y% of what?"</li>
-                <li>Standard calculator: digits, arithmetic, memory (M+/MR/MC), percentage key</li>
-                <li>Scientific mode: unlimited math rows, real-time evaluation, copy results</li>
-                <li>State persistence via <code>localStorage</code> (theme, mode, cards, history)</li>
-                <li>Keyboard shortcuts for rapid entry</li>
-                <li>Responsive design (desktop two-panel &amp; mobile drawer)</li>
-            </ul>
+            <!-- 2-Column Grid -->
+            <div class="about-grid">
+                <!-- Tech Stack -->
+                <div>
+                    <div class="about-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                        Tech Stack
+                    </div>
+                    <div class="about-badges">
+                        <span class="about-badge">HTML5</span>
+                        <span class="about-badge">CSS3</span>
+                        <span class="about-badge">Vanilla JS</span>
+                        <span class="about-badge">MathLive</span>
+                        <span class="about-badge">Math.js</span>
+                        <span class="about-badge">PWA</span>
+                    </div>
+                </div>
 
-            <h3>Limitations</h3>
-            <ul>
-                <li>Runs entirely client-side &mdash; no server, no database, no cloud sync</li>
-                <li>Scientific mode requires an internet connection (MathLive &amp; Math.js loaded from CDN)</li>
-                <li>Calculation precision limited by JavaScript floating-point (IEEE 754 double)</li>
-                <li>No unit conversions, graphing, or symbolic algebra</li>
-                <li>Audit tape is stored in-memory only (cleared on page reload unless persisted)</li>
-            </ul>
+                <!-- Security / Architecture -->
+                <div>
+                    <div class="about-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        Security &amp; Architecture
+                    </div>
+                    <ul class="about-list">
+                        <li>SRI hashes on CDN scripts</li>
+                        <li>100% client-side, zero data sent</li>
+                        <li>Service Worker offline cache</li>
+                        <li>localStorage state persistence</li>
+                    </ul>
+                </div>
 
-            <button class="about-close" onclick="document.getElementById('about-overlay').classList.remove('open')">Got
-                it</button>
+                <!-- Features -->
+                <div>
+                    <div class="about-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        Features
+                    </div>
+                    <ul class="about-list">
+                        <li>4 percentage calc types</li>
+                        <li>Standard + Scientific modes</li>
+                        <li>Memory (M+/MR/MC/M−)</li>
+                        <li>12 themes + dark mode</li>
+                        <li>Audit tape history</li>
+                        <li>Keyboard shortcuts</li>
+                    </ul>
+                </div>
+
+                <!-- Limitations -->
+                <div>
+                    <div class="about-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        Limitations
+                    </div>
+                    <ul class="about-list about-list--warn">
+                        <li>No server, DB, or cloud sync</li>
+                        <li>Scientific mode needs internet</li>
+                        <li>IEEE 754 float precision</li>
+                        <li>No graphing or unit conversion</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Developer Credit -->
+            <div class="about-developer">
+                <img class="about-qr" src="frame.png" alt="QR code" />
+                <div class="about-dev-info">
+                    <h4>Built by Danh Michael Mujar</h4>
+                    <p>Business Support Senior Specialist at WTW who believes numbers should be beautiful and tools
+                        should be transparent. Powered by curiosity, caffeine, and Generative AI.</p>
+                    <a class="about-linkedin" href="https://www.linkedin.com/in/danh-michael-mujar-599112210"
+                        target="_blank" rel="noopener noreferrer">Connect on LinkedIn <span>&rarr;</span></a>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        // About modal open/close logic with focus trap and ARIA management
+        (function () {
+            const overlay = document.getElementById('about-overlay');
+            const modal = overlay.querySelector('.about-modal');
+            const fabBtn = document.getElementById('about-fab-btn');
+            const closeX = document.getElementById('about-close-x');
+            let previouslyFocused = null;
+
+            function getFocusableElements() {
+                return modal.querySelectorAll(
+                    'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+                );
+            }
+
+            function openAbout() {
+                previouslyFocused = document.activeElement;
+                overlay.classList.add('open');
+                overlay.setAttribute('aria-hidden', 'false');
+                // Focus the close button after opening
+                setTimeout(function () { closeX.focus(); }, 50);
+            }
+
+            function closeAbout() {
+                overlay.classList.remove('open');
+                overlay.setAttribute('aria-hidden', 'true');
+                // Restore focus to the element that opened the modal
+                if (previouslyFocused && previouslyFocused.focus) {
+                    previouslyFocused.focus();
+                }
+            }
+
+            fabBtn.addEventListener('click', openAbout);
+            closeX.addEventListener('click', closeAbout);
+            overlay.addEventListener('click', function (e) {
+                if (e.target === overlay) closeAbout();
+            });
+
+            // Escape key closes modal
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && overlay.classList.contains('open')) {
+                    closeAbout();
+                    e.stopImmediatePropagation();
+                }
+            });
+
+            // Focus trap — Tab/Shift+Tab cycle within the modal
+            modal.addEventListener('keydown', function (e) {
+                if (e.key !== 'Tab') return;
+                var focusable = getFocusableElements();
+                if (focusable.length === 0) return;
+                var first = focusable[0];
+                var last = focusable[focusable.length - 1];
+                if (e.shiftKey) {
+                    if (document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    }
+                } else {
+                    if (document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                }
+            });
+        })();
+    </script>
 
     <!-- Service Worker Registration -->
     <script>
