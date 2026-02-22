@@ -1295,7 +1295,7 @@ body.dark-theme .mobile-panel-fab:hover {
 
     .header-controls {
         position: absolute;
-        top: 0;
+        top: -0.75rem;
         right: 0;
         flex-direction: row;
         align-items: center;
@@ -1322,6 +1322,14 @@ body.dark-theme .mobile-panel-fab:hover {
 
     .header-subtext {
         font-size: 0.85rem;
+    }
+
+    .card-header-wrapper {
+        align-items: flex-start;
+    }
+
+    .add-row-btn {
+        margin-top: 0.15rem;
     }
 
     /* Force FAB visibility on mobile */
