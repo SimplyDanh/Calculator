@@ -1,5 +1,9 @@
 // services/app.js
 
+/* --- Configuration Constants --- */
+const TOAST_DURATION_MS = 2000;
+const MAX_AUDIT_ENTRIES = 100;
+
 /* Formatter for professional decimal format */
 const proFormatter = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
@@ -11,32 +15,32 @@ const proFormatter = new Intl.NumberFormat('en-US', {
 const ROW_TEMPLATES = {
     'type1': `
                 <div class="input-group">
-                    <input type="number" class="val-x" placeholder="X" step="any">
+                    <input type="number" name="val-x" class="val-x" placeholder="X" step="any" autocomplete="off">
                     <span>is what % of</span>
-                    <input type="number" class="val-y" placeholder="Y" step="any">
+                    <input type="number" name="val-y" class="val-y" placeholder="Y" step="any" autocomplete="off">
                 </div>
             `,
     'type2': `
                 <div class="input-group">
                     <span>What is</span>
-                    <input type="number" class="val-x" placeholder="X %" step="any">
+                    <input type="number" name="val-x" class="val-x" placeholder="X %" step="any" autocomplete="off">
                     <span>% of</span>
-                    <input type="number" class="val-y" placeholder="Y" step="any">
+                    <input type="number" name="val-y" class="val-y" placeholder="Y" step="any" autocomplete="off">
                 </div>
             `,
     'type3': `
                 <div class="input-group">
                     <span>Change from</span>
-                    <input type="number" class="val-x" placeholder="X" step="any">
+                    <input type="number" name="val-x" class="val-x" placeholder="X" step="any" autocomplete="off">
                     <span>to</span>
-                    <input type="number" class="val-y" placeholder="Y" step="any">
+                    <input type="number" name="val-y" class="val-y" placeholder="Y" step="any" autocomplete="off">
                 </div>
             `,
     'type4': `
                 <div class="input-group">
-                    <input type="number" class="val-x" placeholder="X" step="any">
+                    <input type="number" name="val-x" class="val-x" placeholder="X" step="any" autocomplete="off">
                     <span>is</span>
-                    <input type="number" class="val-y" placeholder="P %" step="any">
+                    <input type="number" name="val-y" class="val-y" placeholder="P %" step="any" autocomplete="off">
                     <span>% of what?</span>
                 </div>
             `
@@ -75,7 +79,7 @@ function createRow(type) {
     const container = document.createElement('div');
     container.className = 'calc-row-instance';
 
-    const uniqueId = 'res-' + Math.random().toString(36).substring(2, 9);
+    const uniqueId = 'res-' + crypto.randomUUID().slice(0, 8);
 
     container.innerHTML = `
                 ${ROW_TEMPLATES[type]}
@@ -294,6 +298,20 @@ window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('button[title]:not([aria-label])').forEach(btn => {
         btn.setAttribute('aria-label', btn.getAttribute('title'));
     });
+
+    // --- MathLive Virtual Keyboard Focus Fix ---
+    setTimeout(() => {
+        if (window.mathVirtualKeyboard) {
+            window.mathVirtualKeyboard.addEventListener('virtual-keyboard-toggle', () => {
+                if (window.mathVirtualKeyboard.visible) {
+                    const target = document.querySelector('math-field.last-focused') || document.querySelector('math-field');
+                    if (target) {
+                        setTimeout(() => target.focus(), 50);
+                    }
+                }
+            });
+        }
+    }, 500);
 });
 
 
@@ -465,6 +483,8 @@ function calcEquals(logHistory = true) {
 function addAuditEntry(a, b, op, res) {
     // Track structured data for safe persistence
     auditEntries.unshift({ a: a, b: b, op: op, res: res });
+    // M4 FIX: Cap entries to prevent unbounded localStorage growth
+    if (auditEntries.length > MAX_AUDIT_ENTRIES) auditEntries.length = MAX_AUDIT_ENTRIES;
 
     let opStr = op;
     if (opStr === '*') opStr = '×';
@@ -595,7 +615,7 @@ function showToast(msg = "Copied to clipboard!") {
     toast.classList.add('show');
     setTimeout(() => {
         toast.classList.remove('show');
-    }, 2000);
+    }, TOAST_DURATION_MS);
 }
 
 function toggleDrawer() {
@@ -781,7 +801,7 @@ function addScientificRow() {
     const row = document.createElement('div');
     row.className = 'math-row';
 
-    const uniqueId = 'math-res-' + Math.random().toString(36).substring(2, 9);
+    const uniqueId = 'math-res-' + crypto.randomUUID().slice(0, 8);
 
     // Build math-field element
     const mf = document.createElement('math-field');
@@ -807,11 +827,11 @@ function addScientificRow() {
     copySvg.setAttribute('viewBox', '0 0 24 24'); copySvg.setAttribute('fill', 'none');
     copySvg.setAttribute('stroke', 'currentColor'); copySvg.setAttribute('stroke-width', '2');
     copySvg.setAttribute('stroke-linecap', 'round'); copySvg.setAttribute('stroke-linejoin', 'round');
-    var r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     r.setAttribute('x', '9'); r.setAttribute('y', '9');
     r.setAttribute('width', '13'); r.setAttribute('height', '13');
     r.setAttribute('rx', '2'); r.setAttribute('ry', '2');
-    var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     p.setAttribute('d', 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1');
     copySvg.appendChild(r); copySvg.appendChild(p);
     copyBtn.appendChild(copySvg);
@@ -829,9 +849,9 @@ function addScientificRow() {
     delSvg.setAttribute('viewBox', '0 0 24 24'); delSvg.setAttribute('fill', 'none');
     delSvg.setAttribute('stroke', 'currentColor'); delSvg.setAttribute('stroke-width', '2');
     delSvg.setAttribute('stroke-linecap', 'round'); delSvg.setAttribute('stroke-linejoin', 'round');
-    var l1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    const l1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     l1.setAttribute('x1', '18'); l1.setAttribute('y1', '6'); l1.setAttribute('x2', '6'); l1.setAttribute('y2', '18');
-    var l2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    const l2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     l2.setAttribute('x1', '6'); l2.setAttribute('y1', '6'); l2.setAttribute('x2', '18'); l2.setAttribute('y2', '18');
     delSvg.appendChild(l1); delSvg.appendChild(l2);
     delBtn.appendChild(delSvg);
@@ -884,31 +904,13 @@ function addScientificRow() {
 
 /* copyResult is now a unified function — no monkey-patching needed */
 
-// Ensure MathLive virtual keyboard doesn't steal focus from the input field
-window.addEventListener('DOMContentLoaded', () => {
-    // Some MathLive versions load asynchronously
-    setTimeout(() => {
-        if (window.mathVirtualKeyboard) {
-            window.mathVirtualKeyboard.addEventListener('virtual-keyboard-toggle', () => {
-                if (window.mathVirtualKeyboard.visible) {
-                    const target = document.querySelector('math-field.last-focused') || document.querySelector('math-field');
-                    if (target) {
-                        // Small delay to let MathLive finish rendering its toggle
-                        setTimeout(() => target.focus(), 50);
-                    }
-                }
-            });
-        }
-    }, 500);
-});
-
 /* --- Chameleon Eye Tracking --- */
+const pupil1 = document.getElementById('pupil1');
+const pupil2 = document.getElementById('pupil2');
+
 document.addEventListener('mousemove', (e) => {
     const mouseX = e.clientX;
     const mouseY = e.clientY;
-
-    const pupil1 = document.getElementById('pupil1');
-    const pupil2 = document.getElementById('pupil2');
 
     const movePupil = (pupil, maxRadius) => {
         if (!pupil) return;
@@ -937,11 +939,23 @@ document.addEventListener('mousemove', (e) => {
     });
 });
 
-// Service Worker Registration
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then((reg) => console.log('SW registered:', reg.scope))
-            .catch((err) => console.warn('SW registration failed:', err));
-    });
+/* --- PWA Manifest & Service Worker Setup --- */
+// Prevent CORS and protocol errors when testing locally via file://
+if (window.location.protocol !== 'file:') {
+    // 1. Inject Manifest dynamically
+    const manifestLink = document.createElement('link');
+    manifestLink.rel = 'manifest';
+    manifestLink.href = 'manifest.json';
+    document.head.appendChild(manifestLink);
+
+    // 2. Register Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then((reg) => console.log('SW registered:', reg.scope))
+                .catch((err) => console.warn('SW registration failed:', err));
+        });
+    }
+} else {
+    console.log('Running locally via file:// — PWA features disabled to prevent CORS errors.');
 }
