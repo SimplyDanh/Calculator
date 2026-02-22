@@ -706,7 +706,8 @@ function togglePaletteDropdown(event) {
     document.getElementById('close-drawer-btn').addEventListener('click', toggleDrawer);
 
     // --- Mobile toggle ---
-    document.getElementById('mobile-toggle-btn').addEventListener('click', toggleDrawer);
+    const mobileBtn = document.getElementById('mobile-panel-toggle-btn');
+    if (mobileBtn) mobileBtn.addEventListener('click', toggleDrawer);
 
     // --- Add scientific row ---
     document.getElementById('add-math-btn').addEventListener('click', addScientificRow);
