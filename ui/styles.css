@@ -386,17 +386,9 @@ body::before {
 }
 
 body[class*="theme-aurora"]::before {
-    content: "";
-    position: fixed;
-    inset: -100%;
-    width: 300%;
-    height: 300%;
-    z-index: -1;
-    background: var(--aurora-gradient);
-    filter: blur(80px);
-    animation: aurora-rotate 30s linear infinite;
-    opacity: 0.65;
-    pointer-events: none;
+    background: var(--aurora-bg);
+    opacity: 1;
+    animation: auroraRotate 20s linear infinite;
     will-change: transform;
 }
 
