@@ -19,6 +19,7 @@
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Standard font loading (display=swap handles performance) -->
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
         rel="stylesheet" crossorigin referrerpolicy="no-referrer-when-downgrade">
@@ -110,11 +111,10 @@
                                 data-theme="theme-terracotta" title="Deep Terracotta"></button>
                             <button class="theme-swatch" style="background-color: #3E7153;" data-theme="theme-forest"
                                 title="Forest Green"></button>
-                            <button class="theme-swatch" style="background-color: #475569;" data-theme="theme-slate"
+                             <button class="theme-swatch" style="background-color: #475569;" data-theme="theme-slate"
                                 title="Slate Graphite"></button>
 
                             <!-- Feminine -->
-                            <hr class="theme-divider">
                             <button class="theme-swatch" style="background-color: #B86B77;" data-theme="theme-rosewood"
                                 title="Dusty Rosewood"></button>
                             <button class="theme-swatch" style="background-color: #8CBA92;" data-theme="theme-pistachio"
@@ -123,12 +123,10 @@
                                 title="Royal Purple"></button>
 
                             <!-- Animated Aurora Themes -->
-                            <hr class="theme-divider">
                             <button class="theme-swatch" style="background: conic-gradient(#0ea5e9, #084c61, #0a3a5c);"
                                 data-theme="theme-aurora-ocean" title="Oceanic Aurora (Masculine)"></button>
                             <button class="theme-swatch" style="background: conic-gradient(#10b981, #064e3b, #0f172a);"
                                 data-theme="theme-aurora-cyber" title="Cyber Neon (Masculine)"></button>
-                            <hr class="theme-divider">
                             <button class="theme-swatch" style="background: conic-gradient(#d946ef, #4b1d52, #0d2847);"
                                 data-theme="theme-aurora" title="Cosmic Aurora (Feminine)"></button>
                             <button class="theme-swatch" style="background: conic-gradient(#fb923c, #7c2d12, #831843);"
@@ -281,9 +279,9 @@
             <div class="sidebar-header">
                 <h2>Calculator</h2>
 
-                <div class="mode-toggle">
-                    <button class="toggle-btn active" id="btn-mode-std" data-mode="standard" aria-label="Switch to standard mode">STD</button>
-                    <button class="toggle-btn" id="btn-mode-sci" data-mode="scientific" aria-label="Switch to scientific mode">SCI</button>
+                <div class="mode-toggle" role="radiogroup" aria-label="Calculator Mode">
+                    <button class="toggle-btn active" id="btn-mode-std" data-mode="standard" role="radio" aria-checked="true" aria-label="Switch to standard mode">STD</button>
+                    <button class="toggle-btn" id="btn-mode-sci" data-mode="scientific" role="radio" aria-checked="false" aria-label="Switch to scientific mode">SCI</button>
                 </div>
 
                 <div class="sidebar-controls">

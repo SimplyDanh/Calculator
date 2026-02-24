@@ -2,8 +2,12 @@
  * Z-INDEX SCALE
  * --------------------
  * 1    - slider internals (knob layers)
+ * 1.1  - slider rays (sun-details)
+ * 2    - slider knob (:before)
+ * 3    - slider moon (moon-details)
  * 10   - right-panel (sidebar)
  * 30   - audit-tape overlay
+ * 32   - audit-header (sticky, local context)
  * 50   - header-row, theme-picker dropdown
  * 900  - mobile FABs (about, panel toggle)
  * 1000 - mobile drawer (right-panel.open)
@@ -55,6 +59,8 @@
     --modal-glass-bg: rgba(255, 255, 255, 0.72);
     --modal-glass-border: rgba(255, 255, 255, 0.45);
     --overlay-backdrop: rgba(0, 0, 0, 0.35);
+    --glass-shadow: 0 4px 16px rgba(0, 0, 0, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06);
+    --glass-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08);
 
     /* --- Segment 5: Additional Low Priority Variables (CSS-L1-6) --- */
     --slider-shadow: rgba(0, 0, 0, 0.3);
@@ -103,6 +109,10 @@ body.dark-theme {
     --glass-bg-hover: rgba(40, 42, 52, 0.80);
     --modal-glass-bg: rgba(28, 30, 36, 0.82);
     --modal-glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+    --glass-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+    --close-btn-bg: rgba(255, 255, 255, 0.08);
+    --close-btn-bg-hover: rgba(255, 255, 255, 0.16);
 
     /* Dark Mode Neumorphism */
     --shadow-soft-light: rgba(255, 255, 255, 0.05);
@@ -607,6 +617,8 @@ input[type="number"] {
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
     color: var(--text-primary);
+    appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 input[type="number"]:focus {
@@ -618,11 +630,6 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
-}
-
-input[type=number] {
-    appearance: textfield;
-    -moz-appearance: textfield;
 }
 
 .result-group {
@@ -748,7 +755,7 @@ input[type=number] {
     transition: .4s var(--spring);
     border-radius: 34px;
     overflow: hidden;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 2px 5px var(--slider-shadow);
     border: 1px solid var(--border-color);
 }
 
@@ -765,7 +772,7 @@ input[type=number] {
     width: 20px;
     border-radius: 50%;
     z-index: 2;
-    box-shadow: 0 0 8px rgba(252, 211, 77, 0.9), inset -2px -2px 4px rgba(217, 119, 6, 0.4);
+    box-shadow: 0 0 8px var(--slider-knob-shadow), inset -2px -2px 4px var(--slider-knob-inset-shadow);
 }
 
 /* Sun Details (Dashed Rays) */
@@ -1111,8 +1118,8 @@ math-field:focus-within {
 
 .calc-btn.eq:active {
     transform: translateY(1px);
-    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: rgba(255, 255, 255, 0.9);
+    box-shadow: inset 0 4px 8px var(--btn-eq-active-shadow);
+    color: var(--btn-eq-active-text);
 }
 
 /* Audit Tape */
@@ -1294,10 +1301,6 @@ math-field:focus-within {
     transform: scale(1.1);
 }
 
-.theme-divider {
-    display: none;
-}
-
 /* Shared Glassmorphic FAB style */
 .glass-fab {
     position: fixed;
@@ -1316,7 +1319,7 @@ math-field:focus-within {
     -webkit-backdrop-filter: blur(12px);
     color: var(--text-secondary);
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--glass-shadow);
     transition: transform 0.25s var(--spring), box-shadow 0.25s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease);
 }
 
@@ -1324,7 +1327,7 @@ math-field:focus-within {
     transform: translateY(-2px) scale(1.05);
     color: var(--primary-blue);
     background: var(--glass-bg-hover);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--glass-shadow-hover);
 }
 
 body.dark-theme .glass-fab {
@@ -1696,7 +1699,7 @@ body.dark-theme .about-modal {
     height: 30px;
     border: none;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--close-btn-bg);
     color: var(--text-secondary);
     cursor: pointer;
     display: flex;
@@ -1706,17 +1709,9 @@ body.dark-theme .about-modal {
 }
 
 .about-close-x:hover {
-    background: rgba(0, 0, 0, 0.12);
+    background: var(--close-btn-bg-hover);
     color: var(--text-primary);
     transform: scale(1.1);
-}
-
-body.dark-theme .about-close-x {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-body.dark-theme .about-close-x:hover {
-    background: rgba(255, 255, 255, 0.16);
 }
 
 /* Header */
@@ -1829,11 +1824,7 @@ body.dark-theme .about-badge {
     gap: 1rem;
     margin-top: 1.25rem;
     padding-top: 1.25rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-body.dark-theme .about-developer {
-    border-top-color: rgba(255, 255, 255, 0.08);
+    border-top: 1px solid var(--border-color);
 }
 
 .about-qr {

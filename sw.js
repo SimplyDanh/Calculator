@@ -59,6 +59,12 @@ self.addEventListener('activate', (event) => {
 //  - CDN (fonts, mathlive, mathjs): CACHE-FIRST → they're version-pinned, no need to re-fetch
 self.addEventListener('fetch', (event) => {
     const url = event.request.url;
+
+    // SW-L2 FIX: HTTPS enforcement (except for local dev)
+    if (!url.startsWith('https://') && !url.startsWith('http://localhost') && !url.startsWith('http://127.0.0.1')) {
+        return;
+    }
+
     const isOwnOrigin = url.startsWith(self.location.origin);
 
     if (isOwnOrigin) {
