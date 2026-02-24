@@ -654,6 +654,19 @@ function toggleHistory() {
 /* --- Theme Toggle --- */
 function toggleTheme() {
     const body = document.body;
+
+    // If trying to switch to light mode while on an Aurora theme, revert to default theme
+    const isAurora = Array.from(body.classList).some(c => c.startsWith('theme-aurora'));
+    if (isAurora && body.classList.contains('dark-theme')) {
+        // Remove all themes to go back to default
+        body.classList.remove('theme-aurora', 'theme-aurora-ocean', 'theme-aurora-cyber', 'theme-aurora-sunset');
+
+        // Update swatch active state to default
+        document.querySelectorAll('.theme-swatch').forEach(btn => btn.classList.remove('active'));
+        const defaultSwatch = document.querySelector('.theme-swatch[data-theme=""]');
+        if (defaultSwatch) defaultSwatch.classList.add('active');
+    }
+
     body.classList.toggle('dark-theme');
 
     // Sync checkbox state in case loadState flipped the body class
@@ -758,6 +771,13 @@ function setThemeColor(btnEl, themeClass) {
     // Add new theme class if one was passed (empty string = default Financial Blue)
     if (themeClass) {
         document.body.classList.add(themeClass);
+
+        // Auto-enable dark mode for Aurora themes
+        if (themeClass.startsWith('theme-aurora')) {
+            document.body.classList.add('dark-theme');
+            const checkbox = document.getElementById('checkbox');
+            if (checkbox) checkbox.checked = true;
+        }
     }
 
     // Auto close dropdown after picking
