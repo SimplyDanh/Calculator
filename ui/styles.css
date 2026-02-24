@@ -56,6 +56,15 @@
     --modal-glass-border: rgba(255, 255, 255, 0.45);
     --overlay-backdrop: rgba(0, 0, 0, 0.35);
 
+    /* --- Segment 5: Additional Low Priority Variables (CSS-L1-6) --- */
+    --slider-shadow: rgba(0, 0, 0, 0.3);
+    --slider-knob-shadow: rgba(252, 211, 77, 0.9);
+    --slider-knob-inset-shadow: rgba(217, 119, 6, 0.4);
+    --btn-eq-active-shadow: rgba(0, 0, 0, 0.2);
+    --btn-eq-active-text: rgba(255, 255, 255, 0.9);
+    --close-btn-bg: rgba(0, 0, 0, 0.06);
+    --close-btn-bg-hover: rgba(0, 0, 0, 0.12);
+
     /* Neumorphism (Soft UI) Base Variables */
     --shadow-soft-light: rgba(255, 255, 255, 0.9);
     --shadow-soft-dark: rgba(0, 0, 0, 0.08);

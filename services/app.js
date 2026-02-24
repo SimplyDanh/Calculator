@@ -1,3 +1,5 @@
+'use strict';
+
 // services/app.js
 
 /* --- Configuration Constants --- */
@@ -318,16 +320,24 @@ function restoreScientificRows(state) {
 }
 
 // Setup auto-save triggers
-let saveTimeout;
-function triggerSave() {
-    clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(saveState, 500);
-}
-document.addEventListener('input', triggerSave);
-// Save on button clicks (theme toggles, add row, etc)
-document.addEventListener('click', (e) => {
-    if (e.target.closest('button')) triggerSave();
-});
+(function initSaveTriggers() {
+    let saveTimeout;
+    function triggerSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(saveState, 500);
+    }
+    
+    // APP-L10 FIX: Scope input listener to containers instead of document
+    const inputs = document.querySelectorAll('.calc-card, .scientific-container');
+    inputs.forEach(container => {
+        container.addEventListener('input', triggerSave);
+    });
+
+    // Save on button clicks (theme toggles, add row, etc)
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('button')) triggerSave();
+    });
+})();
 
 // Initialize with 1 row for each card OR load from storage
 window.addEventListener('DOMContentLoaded', () => {
@@ -442,7 +452,7 @@ function calcAction(action) {
         calcState.previousValue = null;
         calcState.operator = null;
         calcState.resetNext = false;
-        document.getElementById('main-calc-prev').textContent = '';
+        if (previewEl) previewEl.textContent = '';
         updateDisplay();
     } else if (action === 'backspace') {
         if (calcState.resetNext) return;
@@ -740,28 +750,34 @@ function togglePaletteDropdown(event) {
 // Replaces all inline onclick/onchange handlers for CSP compliance
 (function bindEvents() {
     // --- Calculator Keypad (event delegation) ---
-    document.getElementById('calc-keypad').addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-action]');
-        if (!btn) return;
-        var action = btn.getAttribute('data-action');
-        var value = btn.getAttribute('data-value');
-        switch (action) {
-            case 'digit': calcDigit(value); break;
-            case 'op': calcOperation(value); break;
-            case 'memory': calcMemory(value); break;
-            case 'clear': calcAction('clear'); break;
-            case 'backspace': calcAction('backspace'); break;
-            case 'percent': calcPercentage(); break;
-            case 'equals': calcEquals(); break;
-        }
-    });
+    const keypad = document.getElementById('calc-keypad');
+    if (keypad) {
+        keypad.addEventListener('click', function (e) {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            const action = btn.getAttribute('data-action');
+            const value = btn.getAttribute('data-value');
+            switch (action) {
+                case 'digit': calcDigit(value); break;
+                case 'op': calcOperation(value); break;
+                case 'memory': calcMemory(value); break;
+                case 'clear': calcAction('clear'); break;
+                case 'backspace': calcAction('backspace'); break;
+                case 'percent': calcPercentage(); break;
+                case 'equals': calcEquals(); break;
+            }
+        });
+    }
 
     // --- Theme Swatches (event delegation) ---
-    document.querySelector('.theme-picker').addEventListener('click', function (e) {
-        var swatch = e.target.closest('.theme-swatch');
-        if (!swatch) return;
-        setThemeColor(swatch, swatch.getAttribute('data-theme'));
-    });
+    const picker = document.querySelector('.theme-picker');
+    if (picker) {
+        picker.addEventListener('click', function (e) {
+            const swatch = e.target.closest('.theme-swatch');
+            if (!swatch) return;
+            setThemeColor(swatch, swatch.getAttribute('data-theme'));
+        });
+    }
 
     // --- Palette toggle ---
     document.getElementById('palette-toggle-btn').addEventListener('click', function (e) {

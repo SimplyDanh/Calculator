@@ -2,6 +2,7 @@
 
 // About modal open/close logic with focus trap and ARIA management
 (function () {
+    const FOCUS_DELAY_MS = 50;
     const overlay = document.getElementById('about-overlay');
     if (!overlay) return;
 
@@ -35,8 +36,11 @@
             el.setAttribute('inert', '');
         });
 
+        // Register Escape listener when open
+        document.addEventListener('keydown', escapeHandler);
+
         // Focus the close button after opening
-        setTimeout(function () { closeX.focus(); }, 50);
+        setTimeout(function () { closeX.focus(); }, FOCUS_DELAY_MS);
     }
 
     function closeAbout() {
@@ -51,9 +55,19 @@
             el.removeAttribute('inert');
         });
 
+        // Remove Escape listener when closed
+        document.removeEventListener('keydown', escapeHandler);
+
         // Restore focus to the element that opened the modal
         if (previouslyFocused && previouslyFocused.focus) {
             previouslyFocused.focus();
+        }
+    }
+
+    function escapeHandler(e) {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) {
+            closeAbout();
+            e.stopImmediatePropagation();
         }
     }
 
@@ -61,14 +75,6 @@
     closeX.addEventListener('click', closeAbout);
     overlay.addEventListener('click', function (e) {
         if (e.target === overlay) closeAbout();
-    });
-
-    // Escape key closes modal
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && overlay.classList.contains('open')) {
-            closeAbout();
-            e.stopImmediatePropagation();
-        }
     });
 
     // Focus trap — Tab/Shift+Tab cycle within the modal
