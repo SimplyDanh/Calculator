@@ -412,11 +412,11 @@ body.theme-aurora-sunset.dark-theme {
 body::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    filter: blur(80px);
+    top: -25%;
+    left: -25%;
+    width: 150%;
+    height: 150%;
+    filter: blur(50px);
     z-index: -1;
     opacity: 0;
     transition: background 0.8s var(--ease), opacity 0.8s var(--ease);
@@ -440,13 +440,25 @@ body[class*="theme-aurora"]::before {
     }
 }
 
+/* Pause aurora animation for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    body[class*="theme-aurora"]::before {
+        animation: none;
+    }
+}
+
 /* Deep Frosted Glass Effect specifically for Aurora Theme */
 body[class*="theme-aurora"] .right-panel,
 body[class*="theme-aurora"] .calc-card,
-body[class*="theme-aurora"] .calc-btn,
 body[class*="theme-aurora"] .left-panel header {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
+    contain: layout style;
+}
+
+/* Buttons use opaque background instead of costly backdrop-filter */
+body[class*="theme-aurora"] .calc-btn {
+    background-color: var(--calc-btn-bg);
 }
 
 /* Layout */
