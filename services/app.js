@@ -91,36 +91,69 @@ function createRow(type) {
 
     const uniqueId = 'res-' + crypto.randomUUID().slice(0, 8);
 
-    container.innerHTML = `
-                ${ROW_TEMPLATES[type]}
-                <div class="result-group">
-                    <span>Result:</span>
-                    <span class="result-value" id="${uniqueId}">${(type === 'type1' || type === 'type3') ? '0.00%' : '0.00'}</span>
-                    <button class="icon-btn copy-row-btn" title="Copy to clipboard" aria-label="Copy result">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                    </button>
-                    <button class="icon-btn delete-row-btn" title="Delete Row" aria-label="Delete row">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                </div>
-            `;
+    // Build Row Template part
+    const templateContainer = document.createElement('div');
+    templateContainer.className = 'row-template-content';
+    
+    // Safety: ROW_TEMPLATES contain static spans and inputs, no user data
+    templateContainer.innerHTML = ROW_TEMPLATES[type];
+    container.appendChild(templateContainer);
 
-    // Bind copy and delete via addEventListener (no inline onclick)
-    container.querySelector('.copy-row-btn').addEventListener('click', function () {
-        copyResult(uniqueId);
-    });
-    container.querySelector('.delete-row-btn').addEventListener('click', function () {
-        deleteRow(this);
-    });
+    // Build Result Group part programmatically
+    const resultGroup = document.createElement('div');
+    resultGroup.className = 'result-group';
+
+    const resultLabel = document.createElement('span');
+    resultLabel.textContent = 'Result:';
+    resultGroup.appendChild(resultLabel);
+
+    const resultValue = document.createElement('span');
+    resultValue.className = 'result-value';
+    resultValue.id = uniqueId;
+    resultValue.textContent = (type === 'type1' || type === 'type3') ? '0.00%' : '0.00';
+    resultGroup.appendChild(resultValue);
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'icon-btn copy-row-btn';
+    copyBtn.title = 'Copy to clipboard';
+    copyBtn.setAttribute('aria-label', 'Copy result');
+    copyBtn.appendChild(createCopySvg(18));
+    resultGroup.appendChild(copyBtn);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'icon-btn delete-row-btn';
+    deleteBtn.title = 'Delete Row';
+    deleteBtn.setAttribute('aria-label', 'Delete row');
+    
+    const deleteSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    deleteSvg.setAttribute('width', '18');
+    deleteSvg.setAttribute('height', '18');
+    deleteSvg.setAttribute('viewBox', '0 0 24 24');
+    deleteSvg.setAttribute('fill', 'none');
+    deleteSvg.setAttribute('stroke', 'currentColor');
+    deleteSvg.setAttribute('stroke-width', '2');
+    deleteSvg.setAttribute('stroke-linecap', 'round');
+    deleteSvg.setAttribute('stroke-linejoin', 'round');
+    
+    const l1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    l1.setAttribute('x1', '18'); l1.setAttribute('y1', '6'); l1.setAttribute('x2', '6'); l1.setAttribute('y2', '18');
+    const l2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    l2.setAttribute('x1', '6'); l2.setAttribute('y1', '6'); l2.setAttribute('x2', '18'); l2.setAttribute('y2', '18');
+    deleteSvg.appendChild(l1);
+    deleteSvg.appendChild(l2);
+    deleteBtn.appendChild(deleteSvg);
+    resultGroup.appendChild(deleteBtn);
+
+    container.appendChild(resultGroup);
+
+    // Bind copy and delete
+    copyBtn.addEventListener('click', () => copyResult(uniqueId));
+    deleteBtn.addEventListener('click', () => deleteRow(deleteBtn));
 
     // Setup listeners
     const xInput = container.querySelector('.val-x');
     const yInput = container.querySelector('.val-y');
-    const resEl = container.querySelector('.result-value');
+    const resEl = resultValue;
 
     const updater = () => {
         const xVal = parseFloat(xInput.value);
@@ -193,85 +226,94 @@ function loadState() {
 
     try {
         const state = JSON.parse(saved);
-
-        // Restore Theme
-        if (state.darkMode && !document.body.classList.contains('dark-theme')) toggleTheme();
-        if (!state.darkMode && document.body.classList.contains('dark-theme')) toggleTheme();
-
-        // Force sync toggle switch visually upon loading
-        const checkbox = document.getElementById('checkbox');
-        if (checkbox) checkbox.checked = state.darkMode;
-
-        if (state.theme && VALID_THEMES.includes(state.theme)) {
-            const btn = document.querySelector('.theme-swatch[data-theme="' + state.theme + '"]');
-            if (btn) setThemeColor(btn, state.theme);
-        }
-
-        // Restore Mode
-        if (state.mode === 'scientific') setCalcMode('scientific');
-
-        // Restore Audit Tape from structured data (safe — no innerHTML)
-        if (state.auditData && Array.isArray(state.auditData)) {
-            // Rebuild entries in reverse so prepend order matches original
-            state.auditData.slice().reverse().forEach(entry => {
-                if (typeof entry.a === 'number' && typeof entry.b === 'number' &&
-                    typeof entry.op === 'string' && typeof entry.res === 'number' &&
-                    isFinite(entry.a) && isFinite(entry.b) && isFinite(entry.res)) {
-                    addAuditEntry(entry.a, entry.b, entry.op, entry.res);
-                }
-            });
-        }
-
-        // Restore Percentage Cards
-        Object.keys(state.cards || {}).forEach(type => {
-            if (!VALID_CARD_TYPES.includes(type)) return;
-
-            const card = document.querySelector(`.calc-card[data-type="${type}"]`);
-            if (card) {
-                const container = card.querySelector('.calc-rows-container');
-                if (!container) return;
-                
-                container.replaceChildren();
-                if (state.cards[type].length === 0) {
-                    container.appendChild(createRow(type));
-                } else {
-                    state.cards[type].forEach(rowData => {
-                        const newRow = createRow(type);
-                        const x = newRow.querySelector('.val-x');
-                        const y = newRow.querySelector('.val-y');
-                        if (x && y) {
-                            x.value = rowData.x || '';
-                            y.value = rowData.y || '';
-                            container.appendChild(newRow);
-                            x.dispatchEvent(new Event('input'));
-                        }
-                    });
-                }
-            }
-        });
-
-        // Restore Scientific Rows
-        if (state.sciRows && state.sciRows.length > 0) {
-            const sciWrapper = document.getElementById('sci-rows-wrapper');
-            if (sciWrapper) {
-                sciWrapper.replaceChildren();
-                state.sciRows.forEach((val, index) => {
-                    addScientificRow();
-                    setTimeout(() => {
-                        const mfs = document.querySelectorAll('math-field');
-                        if (mfs[index]) {
-                            mfs[index].value = val;
-                            mfs[index].dispatchEvent(new Event('input', { bubbles: true }));
-                        }
-                    }, 100);
-                });
-            }
-        }
-
+        restoreThemeAndMode(state);
+        restoreAuditTape(state);
+        restorePercentageCards(state);
+        restoreScientificRows(state);
         return true;
     } catch (e) {
         console.error("Failed to load calc state", e);
         return false;
+    }
+}
+
+function restoreThemeAndMode(state) {
+    // Restore Theme
+    if (state.darkMode && !document.body.classList.contains('dark-theme')) toggleTheme();
+    if (!state.darkMode && document.body.classList.contains('dark-theme')) toggleTheme();
+
+    // Force sync toggle switch visually upon loading
+    const checkbox = document.getElementById('checkbox');
+    if (checkbox) checkbox.checked = state.darkMode;
+
+    if (state.theme && VALID_THEMES.includes(state.theme)) {
+        const btn = document.querySelector('.theme-swatch[data-theme="' + state.theme + '"]');
+        if (btn) setThemeColor(btn, state.theme);
+    }
+
+    // Restore Mode
+    if (state.mode === 'scientific') setCalcMode('scientific');
+}
+
+function restoreAuditTape(state) {
+    if (state.auditData && Array.isArray(state.auditData)) {
+        // Rebuild entries in reverse so prepend order matches original
+        state.auditData.slice().reverse().forEach(entry => {
+            if (typeof entry.a === 'number' && typeof entry.b === 'number' &&
+                typeof entry.op === 'string' && typeof entry.res === 'number' &&
+                isFinite(entry.a) && isFinite(entry.b) && isFinite(entry.res)) {
+                addAuditEntry(entry.a, entry.b, entry.op, entry.res);
+            }
+        });
+    }
+}
+
+function restorePercentageCards(state) {
+    Object.keys(state.cards || {}).forEach(type => {
+        if (!VALID_CARD_TYPES.includes(type)) return;
+
+        const card = document.querySelector(`.calc-card[data-type="${type}"]`);
+        if (card) {
+            const container = card.querySelector('.calc-rows-container');
+            if (!container) return;
+            
+            container.replaceChildren();
+            if (state.cards[type].length === 0) {
+                container.appendChild(createRow(type));
+            } else {
+                state.cards[type].forEach(rowData => {
+                    const newRow = createRow(type);
+                    const x = newRow.querySelector('.val-x');
+                    const y = newRow.querySelector('.val-y');
+                    if (x && y) {
+                        x.value = rowData.x || '';
+                        y.value = rowData.y || '';
+                        container.appendChild(newRow);
+                        x.dispatchEvent(new Event('input'));
+                    }
+                });
+            }
+        }
+    });
+}
+
+function restoreScientificRows(state) {
+    if (state.sciRows && state.sciRows.length > 0) {
+        const sciWrapper = document.querySelector('.sci-rows-wrapper');
+        if (sciWrapper) {
+            sciWrapper.replaceChildren();
+            state.sciRows.forEach((val, index) => {
+                addScientificRow();
+                // APP-M3 FIX: Use incremental delays to prevent race conditions during DOM injection
+                setTimeout(() => {
+                    const mfs = document.querySelectorAll('math-field');
+                    if (mfs[index]) {
+                        mfs[index].value = val;
+                        mfs[index].dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                }, 100 * (index + 1));
+            });
+        }
     }
 }
 
@@ -516,7 +558,7 @@ function addAuditEntry(a, b, op, res) {
     const equation = proFormatter.format(a) + ' ' + opStr + ' ' + proFormatter.format(b);
     const resultFormat = proFormatter.format(res);
 
-    // Build DOM safely — no innerHTML, no inline onclick
+    // Build DOM safely
     const li = document.createElement('li');
     li.className = 'audit-item';
 
@@ -527,46 +569,39 @@ function addAuditEntry(a, b, op, res) {
     const resultRow = document.createElement('div');
     resultRow.className = 'audit-result-row';
 
+    const actionsDiv = createAuditActions(res, resultFormat);
+    const resDiv = document.createElement('div');
+    resDiv.className = 'audit-result';
+    resDiv.textContent = resultFormat;
+
+    resultRow.appendChild(actionsDiv);
+    resultRow.appendChild(resDiv);
+    li.appendChild(eqDiv);
+    li.appendChild(resultRow);
+    auditList.prepend(li);
+}
+
+function createAuditActions(res, resultFormat) {
     const actionsDiv = document.createElement('div');
     actionsDiv.className = 'audit-actions';
 
-    // "Use" button — addEventListener instead of inline onclick
     const useBtn = document.createElement('button');
     useBtn.className = 'btn-use';
     useBtn.textContent = 'Use';
-    useBtn.addEventListener('click', function () {
-        useAuditValue(res);
-    });
+    useBtn.addEventListener('click', () => useAuditValue(res));
 
-    // "Copy" button — addEventListener instead of inline onclick
     const copyBtn = document.createElement('button');
     copyBtn.className = 'icon-btn';
     copyBtn.title = 'Copy';
     copyBtn.setAttribute('aria-label', 'Copy result');
-    const copySvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    copySvg.setAttribute('width', '14');
-    copySvg.setAttribute('height', '14');
-    copySvg.setAttribute('viewBox', '0 0 24 24');
-    copySvg.setAttribute('fill', 'none');
-    copySvg.setAttribute('stroke', 'currentColor');
-    copySvg.setAttribute('stroke-width', '2');
-    copySvg.setAttribute('stroke-linecap', 'round');
-    copySvg.setAttribute('stroke-linejoin', 'round');
-    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    rect.setAttribute('x', '9'); rect.setAttribute('y', '9');
-    rect.setAttribute('width', '13'); rect.setAttribute('height', '13');
-    rect.setAttribute('rx', '2'); rect.setAttribute('ry', '2');
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1');
-    copySvg.appendChild(rect);
-    copySvg.appendChild(path);
-    copyBtn.appendChild(copySvg);
-    copyBtn.addEventListener('click', function () {
+    copyBtn.appendChild(createCopySvg(14));
+    
+    copyBtn.addEventListener('click', () => {
         const rawValue = resultFormat.replace(/[%,]/g, '');
         if (rawValue) {
-            navigator.clipboard.writeText(rawValue).then(function () {
+            navigator.clipboard.writeText(rawValue).then(() => {
                 showToast('Copied to clipboard!');
-            }).catch(function () {
+            }).catch(() => {
                 showToast('Copy failed');
             });
         }
@@ -574,18 +609,7 @@ function addAuditEntry(a, b, op, res) {
 
     actionsDiv.appendChild(useBtn);
     actionsDiv.appendChild(copyBtn);
-
-    const resDiv = document.createElement('div');
-    resDiv.className = 'audit-result';
-    resDiv.textContent = resultFormat;
-
-    resultRow.appendChild(actionsDiv);
-    resultRow.appendChild(resDiv);
-
-    li.appendChild(eqDiv);
-    li.appendChild(resultRow);
-
-    auditList.prepend(li);
+    return actionsDiv;
 }
 
 function clearAuditTape() {
@@ -631,15 +655,44 @@ function copyResult(elementId, hardcodedValue, isMathRow) {
     }
 }
 
+let toastTimeout;
 function showToast(msg = "Copied to clipboard!") {
     const toast = document.getElementById('toast');
     if (!toast) return;
     
+    clearTimeout(toastTimeout);
     toast.textContent = msg;
     toast.classList.add('show');
-    setTimeout(() => {
+    toastTimeout = setTimeout(() => {
         toast.classList.remove('show');
     }, TOAST_DURATION_MS);
+}
+
+/**
+ * Shared SVG creation for copy buttons (APP-M7)
+ */
+function createCopySvg(size = 14) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', size);
+    svg.setAttribute('height', size);
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '2');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', '9'); rect.setAttribute('y', '9');
+    rect.setAttribute('width', '13'); rect.setAttribute('height', '13');
+    rect.setAttribute('rx', '2'); rect.setAttribute('ry', '2');
+    
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1');
+    
+    svg.appendChild(rect);
+    svg.appendChild(path);
+    return svg;
 }
 
 function toggleDrawer() {
@@ -844,17 +897,33 @@ function setCalcMode(mode) {
 }
 
 function addScientificRow() {
-    const wrapper = document.getElementById('sci-rows-wrapper');
+    const wrapper = document.querySelector('.sci-rows-wrapper');
     const row = document.createElement('div');
     row.className = 'math-row';
 
     const uniqueId = 'math-res-' + crypto.randomUUID().slice(0, 8);
+    const mf = createMathField();
+    const actionsDiv = createMathActions(uniqueId, row);
 
-    // Build math-field element
+    row.appendChild(mf);
+    row.appendChild(actionsDiv);
+    wrapper.appendChild(row);
+
+    setupMathFieldListeners(mf, document.getElementById(uniqueId));
+    mf.focus();
+}
+
+function createMathField() {
     const mf = document.createElement('math-field');
     mf.setAttribute('virtual-keyboard-mode', 'manual');
+    mf.addEventListener('focus', () => {
+        document.querySelectorAll('math-field').forEach(f => f.classList.remove('last-focused'));
+        mf.classList.add('last-focused');
+    });
+    return mf;
+}
 
-    // Build actions container
+function createMathActions(uniqueId, rowEl) {
     const actionsDiv = document.createElement('div');
     actionsDiv.className = 'math-actions';
 
@@ -864,33 +933,18 @@ function addScientificRow() {
     resEl.setAttribute('aria-live', 'polite');
     resEl.textContent = '= ';
 
-    // Copy button — addEventListener instead of inline onclick
     const copyBtn = document.createElement('button');
     copyBtn.className = 'icon-btn';
     copyBtn.title = 'Copy Result';
     copyBtn.setAttribute('aria-label', 'Copy result');
-    const copySvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    copySvg.setAttribute('width', '16'); copySvg.setAttribute('height', '16');
-    copySvg.setAttribute('viewBox', '0 0 24 24'); copySvg.setAttribute('fill', 'none');
-    copySvg.setAttribute('stroke', 'currentColor'); copySvg.setAttribute('stroke-width', '2');
-    copySvg.setAttribute('stroke-linecap', 'round'); copySvg.setAttribute('stroke-linejoin', 'round');
-    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    r.setAttribute('x', '9'); r.setAttribute('y', '9');
-    r.setAttribute('width', '13'); r.setAttribute('height', '13');
-    r.setAttribute('rx', '2'); r.setAttribute('ry', '2');
-    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    p.setAttribute('d', 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1');
-    copySvg.appendChild(r); copySvg.appendChild(p);
-    copyBtn.appendChild(copySvg);
-    copyBtn.addEventListener('click', function () {
-        copyResult(uniqueId, null, true);
-    });
+    copyBtn.appendChild(createCopySvg(16));
+    copyBtn.addEventListener('click', () => copyResult(uniqueId, null, true));
 
-    // Delete button — addEventListener instead of inline onclick
     const delBtn = document.createElement('button');
     delBtn.className = 'icon-btn delete-row-btn';
     delBtn.title = 'Delete';
     delBtn.setAttribute('aria-label', 'Delete row');
+    
     const delSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     delSvg.setAttribute('width', '16'); delSvg.setAttribute('height', '16');
     delSvg.setAttribute('viewBox', '0 0 24 24'); delSvg.setAttribute('fill', 'none');
@@ -902,36 +956,24 @@ function addScientificRow() {
     l2.setAttribute('x1', '6'); l2.setAttribute('y1', '6'); l2.setAttribute('x2', '18'); l2.setAttribute('y2', '18');
     delSvg.appendChild(l1); delSvg.appendChild(l2);
     delBtn.appendChild(delSvg);
-    delBtn.addEventListener('click', function () {
-        row.remove();
-    });
+    delBtn.addEventListener('click', () => rowEl.remove());
 
     actionsDiv.appendChild(resEl);
     actionsDiv.appendChild(copyBtn);
     actionsDiv.appendChild(delBtn);
+    return actionsDiv;
+}
 
-    row.appendChild(mf);
-    row.appendChild(actionsDiv);
-
-    wrapper.appendChild(row);
-
-    mf.addEventListener('focus', () => {
-        document.querySelectorAll('math-field').forEach(f => f.classList.remove('last-focused'));
-        mf.classList.add('last-focused');
-    });
-
-    mf.addEventListener('input', (ev) => {
+function setupMathFieldListeners(mf, resEl) {
+    mf.addEventListener('input', () => {
         try {
-            // Extract standard math expression string from MathLive
             const expr = mf.getValue('ascii-math');
             if (!expr || expr.trim() === '') {
                 resEl.textContent = '= ';
                 return;
             }
 
-            // Use Math.js to evaluate safely
             const calculated = math.evaluate(expr);
-
             if (typeof calculated === 'number' && !isNaN(calculated)) {
                 resEl.textContent = '= ' + proFormatter.format(calculated);
             } else if (calculated && calculated.value !== undefined) {
@@ -940,13 +982,9 @@ function addScientificRow() {
                 resEl.textContent = '= ';
             }
         } catch (e) {
-            // Invalid/incomplete math format typed
             resEl.textContent = '= ';
         }
     });
-
-    // Focus new row automatically
-    mf.focus();
 }
 
 /* copyResult is now a unified function — no monkey-patching needed */
@@ -1010,6 +1048,8 @@ if (window.location.protocol !== 'file:') {
                                 // New SW is installed and waiting — reload to activate it
                                 if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
                                     console.log('New version available — reloading.');
+                                    // APP-M8 FIX: Ensure state is saved before auto-reloading
+                                    saveState();
                                     window.location.reload();
                                 }
                             });

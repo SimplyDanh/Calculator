@@ -1,8 +1,11 @@
 {
     "name": "Percentage & Math Calculator",
     "short_name": "Calculator",
+    "id": "percentage-math-calculator",
     "description": "Free percentage calculator with interactive math tools, scientific mode, and 12 beautiful themes including animated Aurora gradients.",
     "start_url": "./index.html",
+    "scope": "./",
+    "lang": "en",
     "display": "standalone",
     "background_color": "#f4f5f7",
     "theme_color": "#0052cc",

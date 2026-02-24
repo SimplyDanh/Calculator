@@ -13,6 +13,7 @@
     <!-- CSP is enforced via server HTTP headers (e.g., GitHub Pages _headers / Cloudflare) -->
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/svg+xml" href="icon-192.svg">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -42,7 +43,7 @@
             <header class="header-row">
                 <div class="header-brand">
                     <div class="calculator-wrapper">
-                        <svg viewBox="15 5 70 90" overflow="visible" class="calculator-svg">
+                        <svg viewBox="15 5 70 90" overflow="visible" class="calculator-svg" aria-hidden="true" role="presentation">
                             <!-- Calculator Body -->
                             <rect x="20" y="10" width="60" height="80" rx="8" ry="8" fill="var(--primary-blue)"
                                 class="calculator-body" />
@@ -86,7 +87,7 @@
 
                     <div class="theme-dropdown" id="theme-dropdown-container">
                         <button class="icon-btn palette-btn-inner" id="palette-toggle-btn" title="Choose Color Theme">
-                            <svg class="anim-bounce-hover" viewBox="0 0 24 24" fill="none">
+                            <svg class="anim-bounce-hover" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path fill="#e2e8f0"
                                     d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.02 0 1.5-.48 1.5-1.5 0-.48-.2-.94-.52-1.28A1.996 1.996 0 0 1 13.5 16H16c3.31 0 6-2.69 6-6s-2.69-6-6-6z">
                                 </path>
@@ -113,8 +114,7 @@
                                 title="Slate Graphite"></button>
 
                             <!-- Feminine -->
-                            <div class="theme-divider">
-                            </div>
+                            <hr class="theme-divider">
                             <button class="theme-swatch" style="background-color: #B86B77;" data-theme="theme-rosewood"
                                 title="Dusty Rosewood"></button>
                             <button class="theme-swatch" style="background-color: #8CBA92;" data-theme="theme-pistachio"
@@ -123,14 +123,12 @@
                                 title="Royal Purple"></button>
 
                             <!-- Animated Aurora Themes -->
-                            <div class="theme-divider">
-                            </div>
+                            <hr class="theme-divider">
                             <button class="theme-swatch" style="background: conic-gradient(#0ea5e9, #084c61, #0a3a5c);"
                                 data-theme="theme-aurora-ocean" title="Oceanic Aurora (Masculine)"></button>
                             <button class="theme-swatch" style="background: conic-gradient(#10b981, #064e3b, #0f172a);"
                                 data-theme="theme-aurora-cyber" title="Cyber Neon (Masculine)"></button>
-                            <div class="theme-divider">
-                            </div>
+                            <hr class="theme-divider">
                             <button class="theme-swatch" style="background: conic-gradient(#d946ef, #4b1d52, #0d2847);"
                                 data-theme="theme-aurora" title="Cosmic Aurora (Feminine)"></button>
                             <button class="theme-swatch" style="background: conic-gradient(#fb923c, #7c2d12, #831843);"
@@ -146,7 +144,7 @@
                                     <div class="slider-bg-day">
                                         <!-- Piling Clouds leaning right, avoiding sun on the left -->
                                         <svg width="68" height="34" viewBox="0 0 68 34"
-                                            style="position:absolute; right: -2px; top: 0;">
+                                            style="position:absolute; right: -2px; top: 0;" aria-hidden="true">
                                             <!-- Ambient Back Cloud -->
                                             <path fill="#bae6fd" opacity="0.6"
                                                 d="M 28 34 C 28 20 40 14 48 18 C 54 10 66 12 68 20 L 68 34 Z">
@@ -168,7 +166,7 @@
                                     <div class="slider-bg-night">
                                         <!-- Detailed Stars -->
                                         <svg width="68" height="34" viewBox="0 0 68 34" fill="#fbbf24"
-                                            style="position:absolute; left:0; top:0;">
+                                            style="position:absolute; left:0; top:0;" aria-hidden="true">
                                             <!-- Four point star -->
                                             <path
                                                 d="M 16 10 L 17.5 14 L 21.5 15.5 L 17.5 17 L 16 21 L 14.5 17 L 10.5 15.5 L 14.5 14 Z"
@@ -184,7 +182,7 @@
                                 </div>
 
                                 <!-- Decorative Elements ON the Knob -->
-                                <svg class="sun-details" viewBox="0 0 32 32">
+                                <svg class="sun-details" viewBox="0 0 32 32" aria-hidden="true">
                                     <g stroke="#fcd34d" stroke-width="2.5" stroke-linecap="round">
                                         <!-- Dashed rays radiating outward -->
                                         <line x1="16" y1="1.5" x2="16" y2="4" />
@@ -197,7 +195,7 @@
                                         <line x1="24.5" y1="7.5" x2="26.5" y2="5.5" />
                                     </g>
                                 </svg>
-                                <svg class="moon-details" viewBox="0 0 24 24">
+                                <svg class="moon-details" viewBox="0 0 24 24" aria-hidden="true">
                                     <path fill="#f8fafc" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                                 </svg>
                             </div>
@@ -207,10 +205,10 @@
             </header>
 
             <!-- Card 1: X is what % of Y -->
-            <div class="calc-card" data-type="type1">
+            <section class="calc-card" data-type="type1">
                 <div class="card-header-wrapper">
                     <h2>X is what % of Y</h2>
-                    <button class="add-row-btn" data-add-row="type1">
+                    <button class="add-row-btn" data-add-row="type1" aria-label="Add row to X is what % of Y">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -222,13 +220,13 @@
                 <div class="calc-rows-container">
                     <!-- Template injected by JS -->
                 </div>
-            </div>
+            </section>
 
             <!-- Card 2: What is X% of Y -->
-            <div class="calc-card" data-type="type2">
+            <section class="calc-card" data-type="type2">
                 <div class="card-header-wrapper">
                     <h2>What is X% of Y</h2>
-                    <button class="add-row-btn" data-add-row="type2">
+                    <button class="add-row-btn" data-add-row="type2" aria-label="Add row to What is X% of Y">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -239,13 +237,13 @@
                 </div>
                 <div class="calc-rows-container">
                 </div>
-            </div>
+            </section>
 
             <!-- Card 3: Percentage change from X to Y -->
-            <div class="calc-card" data-type="type3">
+            <section class="calc-card" data-type="type3">
                 <div class="card-header-wrapper">
                     <h2>Percentage change from X to Y</h2>
-                    <button class="add-row-btn" data-add-row="type3">
+                    <button class="add-row-btn" data-add-row="type3" aria-label="Add row to Percentage change from X to Y">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -256,13 +254,13 @@
                 </div>
                 <div class="calc-rows-container">
                 </div>
-            </div>
+            </section>
 
             <!-- Card 4: X is P% of what? -->
-            <div class="calc-card" data-type="type4">
+            <section class="calc-card" data-type="type4">
                 <div class="card-header-wrapper">
                     <h2>X is P% of what?</h2>
-                    <button class="add-row-btn" data-add-row="type4">
+                    <button class="add-row-btn" data-add-row="type4" aria-label="Add row to X is P% of what?">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -273,7 +271,7 @@
                 </div>
                 <div class="calc-rows-container">
                 </div>
-            </div>
+            </section>
 
 
         </main>
@@ -284,8 +282,8 @@
                 <h2>Calculator</h2>
 
                 <div class="mode-toggle">
-                    <button class="toggle-btn active" id="btn-mode-std" data-mode="standard">STD</button>
-                    <button class="toggle-btn" id="btn-mode-sci" data-mode="scientific">SCI</button>
+                    <button class="toggle-btn active" id="btn-mode-std" data-mode="standard" aria-label="Switch to standard mode">STD</button>
+                    <button class="toggle-btn" id="btn-mode-sci" data-mode="scientific" aria-label="Switch to scientific mode">SCI</button>
                 </div>
 
                 <div class="sidebar-controls">
@@ -314,7 +312,7 @@
 
             <!-- Scientific Mode Container -->
             <div class="scientific-container" id="sci-container">
-                <div id="sci-rows-wrapper">
+                <div id="sci-rows-wrapper" class="sci-rows-wrapper">
                     <!-- Rows injected here -->
                 </div>
                 <button class="add-math-btn" id="add-math-btn">
@@ -335,27 +333,27 @@
 
                 <button class="calc-btn op" data-action="clear">C</button>
                 <button class="calc-btn op" data-action="backspace" aria-label="Backspace">⌫</button>
-                <button class="calc-btn op" data-action="percent">%</button>
-                <button class="calc-btn op" data-action="op" data-value="/">÷</button>
+                <button class="calc-btn op" data-action="percent" aria-label="Percentage">%</button>
+                <button class="calc-btn op" data-action="op" data-value="/" aria-label="Divide">÷</button>
 
                 <button class="calc-btn num" data-action="digit" data-value="7">7</button>
                 <button class="calc-btn num" data-action="digit" data-value="8">8</button>
                 <button class="calc-btn num" data-action="digit" data-value="9">9</button>
-                <button class="calc-btn op" data-action="op" data-value="*">×</button>
+                <button class="calc-btn op" data-action="op" data-value="*" aria-label="Multiply">×</button>
 
                 <button class="calc-btn num" data-action="digit" data-value="4">4</button>
                 <button class="calc-btn num" data-action="digit" data-value="5">5</button>
                 <button class="calc-btn num" data-action="digit" data-value="6">6</button>
-                <button class="calc-btn op" data-action="op" data-value="-">−</button>
+                <button class="calc-btn op" data-action="op" data-value="-" aria-label="Subtract">−</button>
 
                 <button class="calc-btn num" data-action="digit" data-value="1">1</button>
                 <button class="calc-btn num" data-action="digit" data-value="2">2</button>
                 <button class="calc-btn num" data-action="digit" data-value="3">3</button>
-                <button class="calc-btn op" data-action="op" data-value="+">+</button>
+                <button class="calc-btn op" data-action="op" data-value="+" aria-label="Add">+</button>
 
                 <button class="calc-btn num" data-action="digit" data-value="0">0</button>
                 <button class="calc-btn num" data-action="digit" data-value=".">.</button>
-                <button class="calc-btn eq" data-action="equals">=</button>
+                <button class="calc-btn eq" data-action="equals" aria-label="Equals">=</button>
             </div>
 
             <div class="audit-tape-container" id="history-drawer">
@@ -515,9 +513,9 @@
 
                 <!-- Developer Credit -->
                 <div class="about-developer">
-                    <img class="about-qr" src="frame.png" alt="QR code" />
+                    <img class="about-qr" src="frame.png" alt="QR code" width="120" height="120" />
                     <div class="about-dev-info">
-                        <h4>Built by Danh Michael Mujar</h4>
+                        <h3>Built by Danh Michael Mujar</h3>
                         <p>Business Support Senior Specialist at WTW who believes numbers should be beautiful
                             and tools
                             should be transparent. Powered by curiosity, caffeine, and Generative AI.</p>

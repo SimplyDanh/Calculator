@@ -15,7 +15,7 @@
 
     function getFocusableElements() {
         return modal.querySelectorAll(
-            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
         );
     }
 
@@ -23,6 +23,18 @@
         previouslyFocused = document.activeElement;
         overlay.classList.add('open');
         overlay.setAttribute('aria-hidden', 'false');
+        
+        // UI-M1 FIX: Add aria-labelledby
+        modal.setAttribute('aria-labelledby', 'about-heading');
+        
+        // UI-M4 FIX: Lock body scroll
+        document.body.style.overflow = 'hidden';
+        
+        // UI-M2 FIX: Inert background landmarks
+        document.querySelectorAll('.layout-container, .mobile-panel-fab, .about-fab').forEach(el => {
+            el.setAttribute('inert', '');
+        });
+
         // Focus the close button after opening
         setTimeout(function () { closeX.focus(); }, 50);
     }
@@ -30,6 +42,15 @@
     function closeAbout() {
         overlay.classList.remove('open');
         overlay.setAttribute('aria-hidden', 'true');
+
+        // UI-M4 FIX: Restore body scroll
+        document.body.style.overflow = '';
+
+        // UI-M2 FIX: Remove inert from background landmarks
+        document.querySelectorAll('.layout-container, .mobile-panel-fab, .about-fab').forEach(el => {
+            el.removeAttribute('inert');
+        });
+
         // Restore focus to the element that opened the modal
         if (previouslyFocused && previouslyFocused.focus) {
             previouslyFocused.focus();

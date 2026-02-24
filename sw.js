@@ -1,12 +1,13 @@
 // Service Worker — Percentage & Math Calculator PWA
-const CACHE_NAME = 'calc-v9';
+const CACHE_NAME = 'calc-v10';
+const MAX_CACHE_ITEMS = 50;
 
 // App shell + critical CDN dependencies to pre-cache on install
 const PRECACHE_URLS = [
     './',
     './index.html',
     './manifest.json',
-    './icon-192.svg',
+    './icon-192.png',
     './icon-512.svg',
     './frame.png',
     // 3-Tier Architecture files
@@ -19,6 +20,17 @@ const PRECACHE_URLS = [
     // Google Fonts CSS
     'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap'
 ];
+
+// Helper to limit cache size (SW-M2)
+const limitCacheSize = (name, maxItems) => {
+    caches.open(name).then((cache) => {
+        cache.keys().then((keys) => {
+            if (keys.length > maxItems) {
+                cache.delete(keys[0]).then(limitCacheSize(name, maxItems));
+            }
+        });
+    });
+};
 
 // Install: pre-cache app shell
 self.addEventListener('install', (event) => {
@@ -57,7 +69,10 @@ self.addEventListener('fetch', (event) => {
                     // Update cache with fresh copy
                     if (event.request.method === 'GET' && networkResponse.ok) {
                         const clone = networkResponse.clone();
-                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+                        caches.open(CACHE_NAME).then((cache) => {
+                            cache.put(event.request, clone);
+                            limitCacheSize(CACHE_NAME, MAX_CACHE_ITEMS);
+                        }).catch(err => console.warn('SW: Cache write failed', err));
                     }
                     return networkResponse;
                 })
@@ -82,7 +97,10 @@ self.addEventListener('fetch', (event) => {
                 return fetch(event.request).then((networkResponse) => {
                     if (event.request.method === 'GET' && networkResponse.ok) {
                         const clone = networkResponse.clone();
-                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+                        caches.open(CACHE_NAME).then((cache) => {
+                            cache.put(event.request, clone);
+                            limitCacheSize(CACHE_NAME, MAX_CACHE_ITEMS);
+                        }).catch(err => console.warn('SW: Cache write failed', err));
                     }
                     return networkResponse;
                 }).catch(() => {

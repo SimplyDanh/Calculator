@@ -44,6 +44,18 @@
     --primary-alpha-15: rgba(0, 82, 204, 0.15);
     --primary-alpha-30: rgba(0, 82, 204, 0.3);
 
+    /* --- Segment 3: Extracted Variables (CSS-M1-7) --- */
+    --slider-day-bg: #38bdf8;
+    --slider-knob-sun: #fcd34d;
+    --slider-night-bg: #1e1b4b;
+    --btn-eq-text: #ffffff;
+    --glass-border: rgba(255, 255, 255, 0.35);
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-bg-hover: rgba(255, 255, 255, 0.70);
+    --modal-glass-bg: rgba(255, 255, 255, 0.72);
+    --modal-glass-border: rgba(255, 255, 255, 0.45);
+    --overlay-backdrop: rgba(0, 0, 0, 0.35);
+
     /* Neumorphism (Soft UI) Base Variables */
     --shadow-soft-light: rgba(255, 255, 255, 0.9);
     --shadow-soft-dark: rgba(0, 0, 0, 0.08);
@@ -75,6 +87,13 @@ body.dark-theme {
     --primary-alpha-10: rgba(0, 82, 204, 0.15);
     --primary-alpha-15: rgba(0, 82, 204, 0.25);
     --primary-alpha-30: rgba(0, 82, 204, 0.4);
+
+    /* Dark Mode Glass variables */
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-bg: rgba(30, 32, 40, 0.65);
+    --glass-bg-hover: rgba(40, 42, 52, 0.80);
+    --modal-glass-bg: rgba(28, 30, 36, 0.82);
+    --modal-glass-border: rgba(255, 255, 255, 0.08);
 
     /* Dark Mode Neumorphism */
     --shadow-soft-light: rgba(255, 255, 255, 0.05);
@@ -529,13 +548,13 @@ h2 {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    transition: transform 0.4s var(--spring), box-shadow 0.4s var(--spring), border-color 0.4s var(--ease), background-color 0.4s var(--ease);
+    transition: transform 0.4s var(--spring), filter 0.4s var(--spring), border-color 0.4s var(--ease), background-color 0.4s var(--ease);
 }
 
 .calc-card:hover {
     transform: translateY(-4px);
     border-color: var(--primary-alpha-30);
-    box-shadow: var(--shadow-lg);
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
 }
 
 .calc-rows-container {
@@ -632,8 +651,8 @@ input[type=number] {
 
 /* Hide delete buttons when only 1 row exists */
 .calc-rows-container .calc-row-instance:only-child .delete-row-btn,
-#sci-rows-wrapper .math-row:only-child .delete-row-btn {
-    display: none !important;
+.sci-rows-wrapper .math-row:only-child .delete-row-btn {
+    display: none;
 }
 
 .icon-btn:active {
@@ -709,7 +728,7 @@ input[type=number] {
 }
 
 .slider {
-    background-color: #38bdf8;
+    background-color: var(--slider-day-bg);
     /* Brighter sky blue */
     bottom: 0;
     cursor: pointer;
@@ -726,7 +745,7 @@ input[type=number] {
 
 /* The Sun/Moon Base Knob */
 .slider:before {
-    background-color: #fcd34d;
+    background-color: var(--slider-knob-sun);
     /* Base Sun color */
     bottom: 6px;
     content: "";
@@ -789,7 +808,7 @@ input[type=number] {
 
 /* Switch Checked State (Dark Mode) */
 input:checked+.slider {
-    background-color: #1e1b4b;
+    background-color: var(--slider-night-bg);
     /* Deep space */
 }
 
@@ -829,6 +848,7 @@ input:checked+.slider .slider-bg {
 .sidebar-header {
     padding: 1.5rem;
     border-bottom: 1px solid var(--border-color);
+    background: var(--panel-bg); /* Fallback */
     background: color-mix(in srgb, var(--panel-bg) 80%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -951,8 +971,9 @@ math-field {
 
 math-field:focus-within {
     outline: none;
-    border-color: var(--primary-alpha-30);
+    border-color: var(--primary-blue);
     background: var(--bg-color);
+    box-shadow: 0 0 0 3px var(--primary-alpha-10);
 }
 
 .math-result {
@@ -1031,12 +1052,28 @@ math-field:focus-within {
     color: var(--text-primary);
     cursor: pointer;
     box-shadow: var(--shadow-soft-out);
-    transition: transform 0.2s var(--spring), box-shadow 0.2s var(--spring), color 0.2s var(--spring);
+    position: relative;
+    z-index: 1;
+    transition: transform 0.2s var(--spring), color 0.2s var(--spring);
+}
+
+.calc-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    box-shadow: -6px -6px 14px var(--shadow-soft-light), 6px 6px 14px var(--shadow-soft-dark);
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.2s var(--spring);
 }
 
 .calc-btn:hover {
     transform: translateY(-2px);
-    box-shadow: -6px -6px 14px var(--shadow-soft-light), 6px 6px 14px var(--shadow-soft-dark);
+}
+
+.calc-btn:hover::after {
+    opacity: 1;
 }
 
 .calc-btn:active {
@@ -1052,7 +1089,7 @@ math-field:focus-within {
 
 .calc-btn.eq {
     background-color: var(--primary-blue);
-    color: white;
+    color: var(--btn-eq-text);
     grid-column: span 2;
     box-shadow: 0 4px 14px var(--primary-alpha-30);
 }
@@ -1096,6 +1133,7 @@ math-field:focus-within {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border-bottom: 1px dashed var(--border-color);
+    background: var(--bg-color); /* Fallback */
     background: color-mix(in srgb, var(--bg-color) 80%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -1263,8 +1301,8 @@ math-field:focus-within {
     height: 44px;
     padding: 0;
     border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     color: var(--text-secondary);
@@ -1276,17 +1314,16 @@ math-field:focus-within {
 .glass-fab:hover {
     transform: translateY(-2px) scale(1.05);
     color: var(--primary-blue);
-    background: rgba(255, 255, 255, 0.70);
+    background: var(--glass-bg-hover);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 body.dark-theme .glass-fab {
-    border-color: rgba(255, 255, 255, 0.12);
-    background: rgba(30, 32, 40, 0.65);
+    /* Variables handled in :root / body.dark-theme */
 }
 
 body.dark-theme .glass-fab:hover {
-    background: rgba(40, 42, 52, 0.80);
+    /* Variables handled in :root / body.dark-theme */
 }
 
 /* Mobile Drawer Toggle */
@@ -1447,18 +1484,19 @@ body.dark-theme .glass-fab:hover {
     }
 
     /* Force FAB visibility on mobile */
-    .mobile-panel-fab {
-        display: flex !important;
+    .mobile-panel-fab,
+    .about-fab {
+        display: flex;
         bottom: calc(1.5rem + env(safe-area-inset-bottom));
-        right: max(1rem, env(safe-area-inset-right));
         z-index: 900;
     }
 
+    .mobile-panel-fab {
+        right: max(1rem, env(safe-area-inset-right));
+    }
+
     .about-fab {
-        display: flex !important;
-        bottom: calc(1.5rem + env(safe-area-inset-bottom));
         left: max(1rem, env(safe-area-inset-left));
-        z-index: 900;
     }
 
     .calc-keypad {
@@ -1486,8 +1524,8 @@ body.dark-theme .glass-fab:hover {
     }
 
     /* Fix Default Open Bug */
-    .right-panel:not(.open) {
-        transform: translateX(100vw) !important;
+    aside.right-panel:not(.open) {
+        transform: translateX(100vw);
     }
 }
 
@@ -1572,7 +1610,7 @@ button:focus-visible {
     position: fixed;
     inset: 0;
     z-index: 2000;
-    background: rgba(0, 0, 0, 0.35);
+    background: var(--overlay-backdrop);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     display: flex;
@@ -1591,10 +1629,10 @@ button:focus-visible {
 /* --- About Modal Panel --- */
 .about-modal {
     position: relative;
-    background: rgba(255, 255, 255, 0.72);
+    background: var(--modal-glass-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.45);
+    border: 1px solid var(--modal-glass-border);
     border-radius: 20px;
     max-width: 36rem;
     width: 92%;
@@ -1633,9 +1671,7 @@ body.dark-theme .about-modal-inner::-webkit-scrollbar-thumb {
 }
 
 body.dark-theme .about-modal {
-    background: rgba(28, 30, 36, 0.82);
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    /* Variables handled in :root / body.dark-theme */
 }
 
 .about-overlay.open .about-modal {
