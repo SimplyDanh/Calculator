@@ -6,3 +6,12 @@
 
 # System instructions (local)
 system_instructions.md
+
+# Audit report
+audit_report.md
+
+# Local cache
+.cache
+
+# Agent instructions
+AGENTS.md   

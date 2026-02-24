@@ -83,6 +83,24 @@ body.dark-theme {
     --shadow-soft-in: inset -4px -4px 10px var(--shadow-soft-light), inset 4px 4px 10px var(--shadow-soft-dark);
 }
 
+/* Skip Navigation Link */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary-blue);
+    color: white;
+    padding: 8px;
+    z-index: 9999;
+    transition: top 0.2s;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
 /* Apply dynamic transition to everything for smooth theme switching */
 body {
     font-family: var(--font-sans);
@@ -368,9 +386,18 @@ body::before {
 }
 
 body[class*="theme-aurora"]::before {
-    background: var(--aurora-bg);
-    opacity: 1;
-    animation: auroraRotate 20s linear infinite;
+    content: "";
+    position: fixed;
+    inset: -100%;
+    width: 300%;
+    height: 300%;
+    z-index: -1;
+    background: var(--aurora-gradient);
+    filter: blur(80px);
+    animation: aurora-rotate 30s linear infinite;
+    opacity: 0.65;
+    pointer-events: none;
+    will-change: transform;
 }
 
 @keyframes auroraRotate {
@@ -847,6 +874,11 @@ input:checked+.slider .slider-bg {
     outline: none;
 }
 
+.calc-current:focus-visible {
+    box-shadow: 0 0 0 2px var(--bg-color), 0 0 0 4px var(--primary-blue);
+    border-radius: 4px;
+}
+
 .calc-keypad {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1227,13 +1259,12 @@ math-field:focus-within {
     display: none;
 }
 
-/* Mobile Drawer Toggle */
-.mobile-panel-fab {
-    display: none;
+/* Shared Glassmorphic FAB style */
+.glass-fab {
     position: fixed;
     bottom: calc(1.5rem + env(safe-area-inset-bottom));
-    right: max(1.5rem, env(safe-area-inset-right));
     z-index: 900;
+    display: flex;
     align-items: center;
     justify-content: center;
     width: 44px;
@@ -1250,20 +1281,26 @@ math-field:focus-within {
     transition: transform 0.25s var(--spring), box-shadow 0.25s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease);
 }
 
-.mobile-panel-fab:hover {
+.glass-fab:hover {
     transform: translateY(-2px) scale(1.05);
     color: var(--primary-blue);
     background: rgba(255, 255, 255, 0.70);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-body.dark-theme .mobile-panel-fab {
+body.dark-theme .glass-fab {
     border-color: rgba(255, 255, 255, 0.12);
     background: rgba(30, 32, 40, 0.65);
 }
 
-body.dark-theme .mobile-panel-fab:hover {
+body.dark-theme .glass-fab:hover {
     background: rgba(40, 42, 52, 0.80);
+}
+
+/* Mobile Drawer Toggle */
+.mobile-panel-fab {
+    display: none;
+    right: max(1.5rem, env(safe-area-inset-right));
 }
 
 .mobile-panel-fab svg {
@@ -1291,7 +1328,7 @@ body.dark-theme .mobile-panel-fab:hover {
     border-radius: 8px;
     box-shadow: var(--shadow-lg);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 1000;
+    z-index: 1500;
     pointer-events: none;
     opacity: 0;
 }
@@ -1528,44 +1565,14 @@ button:focus-visible {
 
 /* --- About Pill FAB & Glassmorphic Modal --- */
 .about-fab {
-    position: fixed;
-    bottom: calc(1.5rem + env(safe-area-inset-bottom));
     left: max(1.5rem, env(safe-area-inset-left));
-    z-index: 900;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    color: var(--text-secondary);
     font-family: var(--font-sans);
     font-size: 1.1rem;
     font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06);
-    transition: transform 0.25s var(--spring), box-shadow 0.25s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease);
 }
 
 .about-fab:hover {
     transform: translateY(-2px) scale(1.08);
-    color: var(--primary-blue);
-    background: rgba(255, 255, 255, 0.70);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-body.dark-theme .about-fab {
-    border-color: rgba(255, 255, 255, 0.12);
-    background: rgba(30, 32, 40, 0.65);
-}
-
-body.dark-theme .about-fab:hover {
-    background: rgba(40, 42, 52, 0.80);
 }
 
 /* --- About Overlay --- */

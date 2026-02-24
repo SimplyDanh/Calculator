@@ -3,9 +3,14 @@
 // About modal open/close logic with focus trap and ARIA management
 (function () {
     const overlay = document.getElementById('about-overlay');
+    if (!overlay) return;
+
     const modal = overlay.querySelector('.about-modal');
     const fabBtn = document.getElementById('about-fab-btn');
     const closeX = document.getElementById('about-close-x');
+    
+    if (!modal || !fabBtn || !closeX) return;
+
     let previouslyFocused = null;
 
     function getFocusableElements() {
@@ -48,10 +53,10 @@
     // Focus trap — Tab/Shift+Tab cycle within the modal
     modal.addEventListener('keydown', function (e) {
         if (e.key !== 'Tab') return;
-        var focusable = getFocusableElements();
+        const focusable = getFocusableElements();
         if (focusable.length === 0) return;
-        var first = focusable[0];
-        var last = focusable[focusable.length - 1];
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
         if (e.shiftKey) {
             if (document.activeElement === first) {
                 e.preventDefault();

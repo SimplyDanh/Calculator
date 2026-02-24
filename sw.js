@@ -14,7 +14,7 @@ const PRECACHE_URLS = [
     './ui/ui.js',
     './ui/styles.css',
     // CDN dependencies (pinned for offline)
-    'https://unpkg.com/mathlive',
+    'https://unpkg.com/mathlive@0.108.3',
     'https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js',
     // Google Fonts CSS
     'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap'
@@ -55,7 +55,7 @@ self.addEventListener('fetch', (event) => {
             fetch(event.request)
                 .then((networkResponse) => {
                     // Update cache with fresh copy
-                    if (event.request.method === 'GET') {
+                    if (event.request.method === 'GET' && networkResponse.ok) {
                         const clone = networkResponse.clone();
                         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
                     }
@@ -69,6 +69,7 @@ self.addEventListener('fetch', (event) => {
                         if (event.request.mode === 'navigate') {
                             return caches.match('./index.html');
                         }
+                        return new Response('Network error occurred', { status: 408, statusText: 'Network error occurred' });
                     });
                 })
         );
@@ -79,11 +80,14 @@ self.addEventListener('fetch', (event) => {
                 if (cachedResponse) return cachedResponse;
 
                 return fetch(event.request).then((networkResponse) => {
-                    if (event.request.method === 'GET') {
+                    if (event.request.method === 'GET' && networkResponse.ok) {
                         const clone = networkResponse.clone();
                         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
                     }
                     return networkResponse;
+                }).catch(() => {
+                    // Fallback for CDN resources if both cache and network fail
+                    return new Response('Offline and resource not in cache', { status: 503 });
                 });
             })
         );

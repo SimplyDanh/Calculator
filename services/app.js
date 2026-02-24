@@ -4,6 +4,16 @@
 const TOAST_DURATION_MS = 2000;
 const MAX_AUDIT_ENTRIES = 100;
 
+/* --- Security Allowlists --- */
+const VALID_THEMES = [
+    'theme-teal', 'theme-terracotta', 'theme-forest', 'theme-slate',
+    'theme-rosewood', 'theme-pistachio', 'theme-purple',
+    'theme-aurora', 'theme-aurora-ocean', 'theme-aurora-cyber', 'theme-aurora-sunset',
+    '' // Default theme
+];
+
+const VALID_CARD_TYPES = ['type1', 'type2', 'type3', 'type4'];
+
 /* Formatter for professional decimal format */
 const proFormatter = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
@@ -158,10 +168,14 @@ function saveState() {
 
     document.querySelectorAll('.calc-card').forEach(card => {
         const type = card.getAttribute('data-type');
+        if (!type) return;
+
         state.cards[type] = Array.from(card.querySelectorAll('.calc-row-instance')).map(row => {
+            const xInp = row.querySelector('.val-x');
+            const yInp = row.querySelector('.val-y');
             return {
-                x: row.querySelector('.val-x').value,
-                y: row.querySelector('.val-y').value
+                x: xInp ? xInp.value : '',
+                y: yInp ? yInp.value : ''
             };
         });
     });
@@ -188,7 +202,7 @@ function loadState() {
         const checkbox = document.getElementById('checkbox');
         if (checkbox) checkbox.checked = state.darkMode;
 
-        if (state.theme) {
+        if (state.theme && VALID_THEMES.includes(state.theme)) {
             const btn = document.querySelector('.theme-swatch[data-theme="' + state.theme + '"]');
             if (btn) setThemeColor(btn, state.theme);
         }
@@ -209,10 +223,14 @@ function loadState() {
         }
 
         // Restore Percentage Cards
-        for (const type in state.cards) {
+        Object.keys(state.cards || {}).forEach(type => {
+            if (!VALID_CARD_TYPES.includes(type)) return;
+
             const card = document.querySelector(`.calc-card[data-type="${type}"]`);
             if (card) {
                 const container = card.querySelector('.calc-rows-container');
+                if (!container) return;
+                
                 container.replaceChildren();
                 if (state.cards[type].length === 0) {
                     container.appendChild(createRow(type));
@@ -221,14 +239,16 @@ function loadState() {
                         const newRow = createRow(type);
                         const x = newRow.querySelector('.val-x');
                         const y = newRow.querySelector('.val-y');
-                        x.value = rowData.x || '';
-                        y.value = rowData.y || '';
-                        container.appendChild(newRow);
-                        x.dispatchEvent(new Event('input'));
+                        if (x && y) {
+                            x.value = rowData.x || '';
+                            y.value = rowData.y || '';
+                            container.appendChild(newRow);
+                            x.dispatchEvent(new Event('input'));
+                        }
                     });
                 }
             }
-        }
+        });
 
         // Restore Scientific Rows
         if (state.sciRows && state.sciRows.length > 0) {
@@ -329,6 +349,8 @@ const previewEl = document.getElementById('main-calc-prev');
 const auditList = document.getElementById('audit-list');
 
 function updateDisplay() {
+    if (!displayEl || !previewEl) return;
+    
     let hasDot = calcState.currentValue.endsWith('.');
     let targetVal = parseFloat(calcState.currentValue);
     if (isNaN(targetVal)) targetVal = 0;
@@ -611,6 +633,8 @@ function copyResult(elementId, hardcodedValue, isMathRow) {
 
 function showToast(msg = "Copied to clipboard!") {
     const toast = document.getElementById('toast');
+    if (!toast) return;
+    
     toast.textContent = msg;
     toast.classList.add('show');
     setTimeout(() => {
@@ -722,6 +746,8 @@ document.addEventListener('click', (event) => {
 });
 
 function setThemeColor(btnEl, themeClass) {
+    if (themeClass && !VALID_THEMES.includes(themeClass)) return;
+
     // Update active state on buttons
     document.querySelectorAll('.theme-swatch').forEach(btn => btn.classList.remove('active'));
     btnEl.classList.add('active');
