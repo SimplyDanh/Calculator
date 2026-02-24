@@ -1,3 +1,15 @@
+/*
+ * Z-INDEX SCALE
+ * --------------------
+ * 1    - slider internals (knob layers)
+ * 10   - right-panel (sidebar)
+ * 30   - audit-tape overlay
+ * 50   - header-row, theme-picker dropdown
+ * 900  - mobile FABs (about, panel toggle)
+ * 1000 - mobile drawer (right-panel.open)
+ * 2000 - about-overlay (modal backdrop)
+ */
+
 :root {
     --bg-color: #f4f5f7;
     --panel-bg: #ffffff;
@@ -22,6 +34,16 @@
     /* Shadows & Effects */
     --panel-shadow: -4px 0 15px rgba(0, 0, 0, 0.03);
 
+    /* Semantic Colors */
+    --danger: #de350b;
+    --danger-hover: #bf2600;
+    --danger-bg: #ffebe6;
+    --warning: #f59e0b;
+    --primary-alpha-05: rgba(0, 82, 204, 0.05);
+    --primary-alpha-10: rgba(0, 82, 204, 0.1);
+    --primary-alpha-15: rgba(0, 82, 204, 0.15);
+    --primary-alpha-30: rgba(0, 82, 204, 0.3);
+
     /* Neumorphism (Soft UI) Base Variables */
     --shadow-soft-light: rgba(255, 255, 255, 0.9);
     --shadow-soft-dark: rgba(0, 0, 0, 0.08);
@@ -43,6 +65,16 @@ body.dark-theme {
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
     --panel-shadow: -4px 0 25px rgba(0, 0, 0, 0.5);
+
+    /* Dark Mode Semantic Colors */
+    --danger: #ff6b4a;
+    --danger-hover: #ff5232;
+    --danger-bg: rgba(222, 53, 11, 0.15);
+    --warning: #fbbf24;
+    --primary-alpha-05: rgba(0, 82, 204, 0.08);
+    --primary-alpha-10: rgba(0, 82, 204, 0.15);
+    --primary-alpha-15: rgba(0, 82, 204, 0.25);
+    --primary-alpha-30: rgba(0, 82, 204, 0.4);
 
     /* Dark Mode Neumorphism */
     --shadow-soft-light: rgba(255, 255, 255, 0.05);
@@ -83,6 +115,13 @@ body {
 }
 
 /* Custom Scrollbar */
+/* Standard (Firefox) */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--calc-btn-border) var(--bg-color);
+}
+
+/* WebKit (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
     width: 12px;
     height: 12px;
@@ -322,7 +361,6 @@ body::before {
     width: 200%;
     height: 200%;
     filter: blur(80px);
-    animation: auroraRotate 20s linear infinite;
     z-index: -1;
     opacity: 0;
     transition: background 0.8s var(--ease), opacity 0.8s var(--ease);
@@ -332,6 +370,7 @@ body::before {
 body[class*="theme-aurora"]::before {
     background: var(--aurora-bg);
     opacity: 1;
+    animation: auroraRotate 20s linear infinite;
 }
 
 @keyframes auroraRotate {
@@ -388,6 +427,31 @@ body[class*="theme-aurora"] .left-panel header {
     overflow: hidden;
 }
 
+/* Header Layout */
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 50;
+    /* Ensure header sits above cards */
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.header-controls {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    margin-bottom: auto;
+    padding-top: 0.25rem;
+}
+
 /* Typography */
 h1 {
     font-size: 1.8rem;
@@ -427,13 +491,13 @@ h2 {
     display: flex;
     align-items: center;
     gap: 4px;
-    transition: all 0.2s;
+    transition: color 0.2s, border-color 0.2s, background-color 0.2s;
 }
 
 .add-row-btn:hover {
     color: var(--primary-blue);
     border-color: var(--primary-blue);
-    background: rgba(0, 82, 204, 0.05);
+    background: var(--primary-alpha-05);
 }
 
 /* Percentage Cards */
@@ -451,7 +515,7 @@ h2 {
 
 .calc-card:hover {
     transform: translateY(-4px);
-    border-color: rgba(0, 82, 204, 0.3);
+    border-color: var(--primary-alpha-30);
     box-shadow: var(--shadow-lg);
 }
 
@@ -500,7 +564,7 @@ input[type="number"] {
 
 input[type="number"]:focus {
     border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+    box-shadow: 0 0 0 3px var(--primary-alpha-10);
 }
 
 input[type=number]::-webkit-inner-spin-button,
@@ -734,12 +798,12 @@ input:checked+.slider .slider-bg {
 }
 
 .delete-row-btn {
-    color: #de350b;
+    color: var(--danger);
 }
 
 .delete-row-btn:hover {
-    background-color: #ffebe6;
-    color: #bf2600;
+    background-color: var(--danger-bg);
+    color: var(--danger-hover);
 }
 
 /* Accountant Sidebar */
@@ -838,7 +902,7 @@ body.scientific-mode .right-panel {
 }
 
 .math-row:hover {
-    background-color: rgba(0, 82, 204, 0.05);
+    background-color: var(--primary-alpha-05);
     /* Soft dynamic highlight */
 }
 
@@ -863,7 +927,7 @@ math-field {
 
 math-field:focus-within {
     outline: none;
-    border-color: rgba(0, 82, 204, 0.3);
+    border-color: var(--primary-alpha-30);
     background: var(--bg-color);
 }
 
@@ -891,7 +955,7 @@ math-field:focus-within {
     color: var(--text-secondary);
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: border-color 0.2s, color 0.2s, background-color 0.2s;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -901,7 +965,7 @@ math-field:focus-within {
 .add-math-btn:hover {
     border-color: var(--primary-blue);
     color: var(--primary-blue);
-    background: rgba(0, 82, 204, 0.02);
+    background: var(--primary-alpha-05);
 }
 
 /* Mode Toggle */
@@ -923,7 +987,7 @@ math-field:focus-within {
     color: var(--text-secondary);
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 .toggle-btn.active {
@@ -943,7 +1007,7 @@ math-field:focus-within {
     color: var(--text-primary);
     cursor: pointer;
     box-shadow: var(--shadow-soft-out);
-    transition: all 0.2s var(--spring);
+    transition: transform 0.2s var(--spring), box-shadow 0.2s var(--spring), color 0.2s var(--spring);
 }
 
 .calc-btn:hover {
@@ -966,13 +1030,13 @@ math-field:focus-within {
     background-color: var(--primary-blue);
     color: white;
     grid-column: span 2;
-    box-shadow: 0 4px 14px rgba(0, 82, 204, 0.3);
+    box-shadow: 0 4px 14px var(--primary-alpha-30);
 }
 
 .calc-btn.eq:hover {
     background-color: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 82, 204, 0.4);
+    box-shadow: 0 6px 20px var(--primary-alpha-30);
 }
 
 .calc-btn.eq:active {
@@ -1065,7 +1129,7 @@ math-field:focus-within {
 }
 
 .btn-use {
-    background: rgba(0, 82, 204, 0.1);
+    background: var(--primary-alpha-10);
     color: var(--primary-blue);
     border: none;
     padding: 0.2rem 0.5rem;
@@ -1075,18 +1139,36 @@ math-field:focus-within {
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    transition: all 0.2s;
+    transition: background-color 0.2s;
 }
 
 .btn-use:hover {
-    background: rgba(0, 82, 204, 0.2);
+    background: var(--primary-alpha-15);
 }
 
 /* Theme Picker Dropdown */
+.palette-btn-inner {
+    width: 34px;
+    height: 34px;
+    padding: 0.25rem 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+}
+
+.palette-btn-inner svg {
+    width: 18px;
+    height: 18px;
+}
+
 .theme-dropdown {
     position: relative;
     display: inline-block;
     margin-right: 0.5rem;
+    z-index: 50;
     /* Space between palette and dark mode toggle */
 }
 
@@ -1107,7 +1189,7 @@ math-field:focus-within {
     opacity: 0;
     pointer-events: none;
     transform: translateY(-10px);
-    transition: all 0.2s var(--spring);
+    transition: opacity 0.2s var(--spring), transform 0.2s var(--spring), pointer-events 0.2s var(--spring);
     z-index: 50;
     width: max-content;
     min-width: 180px;
@@ -1253,6 +1335,62 @@ body.dark-theme .mobile-panel-fab:hover {
 
 @media (max-width: 600px) {
 
+    .left-panel {
+        padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 6.5rem max(1rem, env(safe-area-inset-left));
+    }
+
+    .header-row {
+        position: relative;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .header-brand {
+        gap: 1rem;
+    }
+
+    .header-controls {
+        position: absolute;
+        top: 0;
+        right: 0;
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+    }
+
+    .theme-switch {
+        transform: scale(0.94);
+        transform-origin: top right;
+    }
+
+    .theme-dropdown {
+        margin-right: 0.5rem;
+    }
+
+    .chameleon-wrapper,
+    .calculator-wrapper {
+        width: 70px;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .header-subtext {
+        font-size: 0.9rem;
+    }
+
+    .card-header-wrapper {
+        align-items: flex-start;
+    }
+
+    .add-row-btn {
+        margin-top: 0.15rem;
+    }
+
     .calc-row-instance {
         flex-direction: column;
         align-items: stretch;
@@ -1277,88 +1415,25 @@ body.dark-theme .mobile-panel-fab:hover {
         justify-content: space-between;
         border-top: 1px dashed var(--border-color);
         padding-top: 1rem;
-        margin-top: 0.5rem;
-    }
-
-    /* --- iPhone 14 Pro Max Layout Fixes --- */
-
-    .left-panel {
-        padding: max(1rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) 6rem max(1.25rem, env(safe-area-inset-left));
-    }
-
-    .header-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
-        position: relative;
-    }
-
-    .header-controls {
-        position: absolute;
-        top: -0.75rem;
-        right: 0;
-        flex-direction: row;
-        align-items: center;
-        gap: 0;
-    }
-
-    .theme-switch {
-        transform: scale(0.94);
-        transform-origin: top right;
-    }
-
-    .theme-dropdown {
-        margin-right: 0.5rem;
-    }
-
-
-    .calculator-wrapper {
-        width: 70px;
-    }
-
-    h1 {
-        font-size: 1.4rem;
-    }
-
-    .header-subtext {
-        font-size: 0.85rem;
-    }
-
-    .card-header-wrapper {
-        align-items: flex-start;
-    }
-
-    .add-row-btn {
-        margin-top: 0.15rem;
     }
 
     /* Force FAB visibility on mobile */
     .mobile-panel-fab {
         display: flex !important;
-        bottom: calc(2.25rem + env(safe-area-inset-bottom));
-        right: max(1.25rem, env(safe-area-inset-right));
+        bottom: calc(1.5rem + env(safe-area-inset-bottom));
+        right: max(1rem, env(safe-area-inset-right));
+        z-index: 900;
     }
 
     .about-fab {
         display: flex !important;
-        bottom: calc(2.25rem + env(safe-area-inset-bottom));
-        left: max(1.25rem, env(safe-area-inset-left));
+        bottom: calc(1.5rem + env(safe-area-inset-bottom));
+        left: max(1rem, env(safe-area-inset-left));
+        z-index: 900;
     }
 
     .calc-keypad {
         padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
-    }
-
-    .header-row {
-        margin-bottom: 2rem;
-    }
-
-    .header-brand {
-        gap: 1rem;
-    }
-
-    h1 {
-        margin-bottom: 0.25rem;
     }
 
     .about-grid {
@@ -1380,7 +1455,6 @@ body.dark-theme .mobile-panel-fab:hover {
         align-items: center;
         text-align: center;
     }
-
 
     /* Fix Default Open Bug */
     .right-panel:not(.open) {
@@ -1660,15 +1734,15 @@ body.dark-theme .about-close-x:hover {
     border-radius: 999px;
     font-size: 0.68rem;
     font-weight: 600;
-    background: rgba(0, 82, 204, 0.08);
+    background: var(--primary-alpha-05);
     color: var(--primary-blue);
-    border: 1px solid rgba(0, 82, 204, 0.15);
+    border: 1px solid var(--primary-alpha-15);
     white-space: nowrap;
 }
 
 body.dark-theme .about-badge {
-    background: rgba(0, 82, 204, 0.15);
-    border-color: rgba(0, 82, 204, 0.25);
+    background: var(--primary-alpha-10);
+    border-color: var(--primary-alpha-15);
 }
 
 /* Section lists */
@@ -1700,7 +1774,7 @@ body.dark-theme .about-badge {
 }
 
 .about-list.about-list--warn li::before {
-    background: #f59e0b;
+    background: var(--warning);
     opacity: 0.7;
 }
 
@@ -1756,121 +1830,11 @@ body.dark-theme .about-developer {
     gap: 0.5rem;
 }
 
-
-
-/* Mobile responsive */
-@media (max-width: 600px) {
-    .left-panel {
-        padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 6.5rem max(1rem, env(safe-area-inset-left));
-    }
-
-    .header-row {
-        position: relative;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .header-brand {
-        gap: 1rem;
-    }
-
-    .header-controls {
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
-
-    .chameleon-wrapper,
-    .calculator-wrapper {
-        width: 70px;
-    }
-
-    h1 {
-        font-size: 1.4rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .header-subtext {
-        font-size: 0.9rem;
-    }
-
-    .calc-row-instance {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .input-group {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    input[type="number"] {
-        width: 100%;
-    }
-
-    .result-group {
-        align-self: flex-end;
-        margin-left: 0;
-        width: 100%;
-        justify-content: space-between;
-        border-top: 1px dashed var(--border-color);
-        padding-top: 1rem;
-    }
-
-    .about-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .about-modal {
-        width: 96%;
-        border-radius: 16px;
-    }
-
-    .about-modal-inner {
-        padding: 1.5rem 1.25rem 1.25rem;
-    }
-
-    .about-developer {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .about-fab {
-        bottom: calc(1.5rem + env(safe-area-inset-bottom));
-        left: max(1rem, env(safe-area-inset-left));
-        z-index: 9999;
-    }
-
-    .mobile-panel-fab {
-        bottom: calc(1.5rem + env(safe-area-inset-bottom));
-        right: max(1rem, env(safe-area-inset-right));
-        z-index: 9999;
-        display: flex;
-    }
-}
-
 /* --- M2 FIX: Utility Classes (replaces inline styles) --- */
 .noscript-msg {
     padding: 2rem;
     text-align: center;
     font-family: sans-serif;
-}
-
-.header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.header-brand {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
 }
 
 .calculator-wrapper {
@@ -1885,27 +1849,6 @@ body.dark-theme .about-developer {
 
 .calculator-body {
     transition: fill 0.4s var(--ease);
-}
-
-.header-controls {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
-    margin-bottom: auto;
-    padding-top: 0.25rem;
-}
-
-.palette-btn-inner {
-    padding: 0.25rem 0.5rem;
-    background: transparent;
-    border: none;
-}
-
-.theme-divider {
-    width: 1px;
-    height: 16px;
-    background: var(--border-color);
-    margin: 0 4px;
 }
 
 .sidebar-controls {
