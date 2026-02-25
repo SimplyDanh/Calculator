@@ -896,6 +896,29 @@ input:checked+.slider .slider-bg {
     gap: 0.5rem;
 }
 
+.calc-display-top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 1.2rem;
+}
+
+.memory-indicator {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    background: var(--primary-alpha-10);
+    padding: 1px 5px;
+    border-radius: 3px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.memory-indicator[hidden] {
+    display: none;
+}
+
 .calc-history-preview {
     font-family: var(--font-mono);
     font-size: 0.9rem;
@@ -913,6 +936,10 @@ input:checked+.slider .slider-bg {
     border: none;
     background: transparent;
     outline: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-height: 3rem;
 }
 
 .calc-current:focus-visible {
@@ -1433,7 +1460,7 @@ math-field:focus-within {
         position: relative;
         flex-direction: column;
         align-items: flex-start;
-        gap: 1.5rem;
+        gap: 0.75rem;
         margin-bottom: 2rem;
     }
 
@@ -1442,11 +1469,10 @@ math-field:focus-within {
     }
 
     .header-controls {
-        position: absolute;
-        top: 0;
-        right: 0;
         flex-direction: row;
         align-items: center;
+        align-self: flex-end;
+        margin-top: -0.5rem;
         gap: 0;
     }
 
@@ -1465,8 +1491,8 @@ math-field:focus-within {
     }
 
     h1 {
-        font-size: 1.4rem;
-        margin-bottom: 0.25rem;
+        font-size: 1.3rem;
+        margin-bottom: 0.15rem;
     }
 
     .header-subtext {

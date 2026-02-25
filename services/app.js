@@ -93,7 +93,7 @@
         switch (type) {
             case 'type1':
                 if (y !== 0) resText = proFormatter.format((x / y) * 100) + '%';
-                else resText = '0.00%';
+                else resText = 'Error';
                 break;
             case 'type2':
                 resText = proFormatter.format((x / 100) * y);
@@ -103,11 +103,11 @@
                     const res = ((y - x) / Math.abs(x)) * 100;
                     const sign = res > 0 ? '+' : '';
                     resText = sign + proFormatter.format(res) + '%';
-                } else resText = '0.00%';
+                } else resText = 'Error';
                 break;
             case 'type4':
                 if (y !== 0) resText = proFormatter.format(x / (y / 100));
-                else resText = '0.00';
+                else resText = 'Error';
                 break;
         }
         return resText;
@@ -122,7 +122,7 @@
         // Build Row Template part
         const templateContainer = document.createElement('div');
         templateContainer.className = 'row-template-content';
-        
+
         // Safety: ROW_TEMPLATES contain static spans and inputs, no user data
         templateContainer.innerHTML = ROW_TEMPLATES[type];
         container.appendChild(templateContainer);
@@ -152,7 +152,7 @@
         deleteBtn.className = 'icon-btn delete-row-btn';
         deleteBtn.title = 'Delete Row';
         deleteBtn.setAttribute('aria-label', 'Delete row');
-        
+
         const deleteSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         deleteSvg.setAttribute('width', '18');
         deleteSvg.setAttribute('height', '18');
@@ -162,7 +162,7 @@
         deleteSvg.setAttribute('stroke-width', '2');
         deleteSvg.setAttribute('stroke-linecap', 'round');
         deleteSvg.setAttribute('stroke-linejoin', 'round');
-        
+
         const l1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         l1.setAttribute('x1', '18'); l1.setAttribute('y1', '6'); l1.setAttribute('x2', '6'); l1.setAttribute('y2', '18');
         const l2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -272,7 +272,14 @@
             if (btn) setThemeColor(btn, state.theme);
         }
 
-        if (state.mode === 'scientific') setCalcMode('scientific');
+        if (state.mode === 'scientific') {
+            const isMobileDrawer = window.matchMedia('(max-width: 1024px)').matches;
+            if (!isMobileDrawer) {
+                setCalcMode('scientific');
+            }
+            // On mobile, skip restoring SCI mode — the drawer is closed,
+            // so the left panel would be invisible with no way to recover.
+        }
     }
 
     function restoreAuditTape(state) {
@@ -295,7 +302,7 @@
             if (card) {
                 const container = card.querySelector('.calc-rows-container');
                 if (!container) return;
-                
+
                 container.replaceChildren();
                 if (state.cards[type].length === 0) {
                     container.appendChild(createRow(type));
@@ -341,7 +348,7 @@
             clearTimeout(saveTimeout);
             saveTimeout = setTimeout(saveState, SAVE_DEBOUNCE_MS);
         }
-        
+
         const inputs = document.querySelectorAll('.calc-card, .scientific-container');
         inputs.forEach(container => {
             container.addEventListener('input', triggerSave);
@@ -407,17 +414,78 @@
     const displayEl = document.getElementById('main-calc-display');
     const previewEl = document.getElementById('main-calc-prev');
     const auditList = document.getElementById('audit-list');
+    const memoryIndicatorEl = document.getElementById('memory-indicator');
+
+    function updateMemoryIndicator() {
+        if (!memoryIndicatorEl) return;
+        if (calcState.memoryValue !== 0) {
+            memoryIndicatorEl.hidden = false;
+        } else {
+            memoryIndicatorEl.hidden = true;
+        }
+    }
+
+    const DISPLAY_MAX_FONT = 2.5;   // rem
+    const DISPLAY_MIN_FONT = 1.0;   // rem
+    const DISPLAY_FONT_STEP = 0.2;  // rem
+
+    /** Format a number in scientific notation: 9.99999998E+17 */
+    function toSciNotation(val) {
+        const exp = Math.floor(Math.log10(Math.abs(val)));
+        const coeff = val / Math.pow(10, exp);
+        const coeffStr = parseFloat(coeff.toPrecision(10)).toString();
+        return `${coeffStr}E+${exp}`;
+    }
+
+    /**
+     * Shrink the display font until the text fits within the container,
+     * starting at the max font size. If it still overflows at the
+     * minimum font, fall back to scientific notation.
+     */
+    function fitDisplayText(text, targetVal) {
+        displayEl.textContent = text;
+        displayEl.style.fontSize = DISPLAY_MAX_FONT + 'rem';
+
+        const container = displayEl.parentElement;
+        const containerWidth = container.clientWidth - 48; // account for padding
+
+        let currentFont = DISPLAY_MAX_FONT;
+        while (displayEl.scrollWidth > containerWidth && currentFont > DISPLAY_MIN_FONT) {
+            currentFont = Math.max(currentFont - DISPLAY_FONT_STEP, DISPLAY_MIN_FONT);
+            displayEl.style.fontSize = currentFont + 'rem';
+        }
+
+        // If still overflowing at minimum font, use scientific notation
+        if (displayEl.scrollWidth > containerWidth && Math.abs(targetVal) >= 1e6) {
+            const sci = toSciNotation(targetVal);
+            displayEl.textContent = sci;
+            displayEl.style.fontSize = DISPLAY_MIN_FONT + 'rem';
+
+            // Try scaling sci notation text back up
+            currentFont = DISPLAY_MIN_FONT;
+            while (currentFont < DISPLAY_MAX_FONT) {
+                const next = Math.min(currentFont + DISPLAY_FONT_STEP, DISPLAY_MAX_FONT);
+                displayEl.style.fontSize = next + 'rem';
+                if (displayEl.scrollWidth > containerWidth) {
+                    displayEl.style.fontSize = currentFont + 'rem';
+                    break;
+                }
+                currentFont = next;
+            }
+        }
+    }
 
     function updateDisplay() {
         if (!displayEl || !previewEl) return;
-        
+
         let hasDot = calcState.currentValue.endsWith('.');
         let targetVal = parseFloat(calcState.currentValue);
         if (isNaN(targetVal)) targetVal = 0;
 
         let formatted = proFormatter.format(targetVal);
         if (hasDot) formatted += '.';
-        displayEl.textContent = formatted;
+
+        fitDisplayText(formatted, targetVal);
 
         if (calcState.previousValue !== null && calcState.operator) {
             const opStr = formatOperator(calcState.operator);
@@ -491,6 +559,7 @@
                 showToast("Subtracted from Memory");
             }
         }
+        updateMemoryIndicator();
     }
     function calcPercentage() {
         let val = parseFloat(calcState.currentValue);
@@ -598,7 +667,7 @@
         copyBtn.title = 'Copy';
         copyBtn.setAttribute('aria-label', 'Copy result');
         copyBtn.appendChild(createCopySvg(14));
-        
+
         copyBtn.addEventListener('click', () => {
             const rawValue = resultFormat.replace(/[%,]/g, '');
             if (rawValue) {
@@ -624,7 +693,7 @@
         calcState.currentValue = val.toString();
         calcState.resetNext = true;
         updateDisplay();
-        toggleHistory(); 
+        toggleHistory();
         if (window.innerWidth <= 1024 && displayEl) {
             displayEl.style.color = 'var(--primary-blue)';
             setTimeout(() => { displayEl.style.color = ''; }, 300);
@@ -660,7 +729,7 @@
     function showToast(msg = "Copied to clipboard!") {
         const toast = document.getElementById('toast');
         if (!toast) return;
-        
+
         clearTimeout(toastTimeout);
         toast.textContent = msg;
         toast.classList.add('show');
@@ -679,15 +748,15 @@
         svg.setAttribute('stroke-width', '2');
         svg.setAttribute('stroke-linecap', 'round');
         svg.setAttribute('stroke-linejoin', 'round');
-        
+
         const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         rect.setAttribute('x', '9'); rect.setAttribute('y', '9');
         rect.setAttribute('width', '13'); rect.setAttribute('height', '13');
         rect.setAttribute('rx', '2'); rect.setAttribute('ry', '2');
-        
+
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1');
-        
+
         svg.appendChild(rect);
         svg.appendChild(path);
         return svg;
@@ -836,7 +905,7 @@
         if (e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'math-field') return;
 
         const sidebar = document.getElementById('sidebar');
-        if (sidebar && sidebar.classList.contains('scientific-active')) return; 
+        if (sidebar && sidebar.classList.contains('scientific-active')) return;
 
         if (e.key >= '0' && e.key <= '9') {
             calcDigit(e.key);
@@ -851,7 +920,7 @@
         } else if (['+', '-', '*', '/'].includes(e.key)) {
             calcOperation(e.key);
         } else if (e.key === 'Enter' || e.key === '=') {
-            e.preventDefault(); 
+            e.preventDefault();
             calcEquals();
         }
     });
@@ -870,34 +939,34 @@
                 return;
             }
 
-        document.body.classList.add('scientific-mode');
-        if (sidebar) sidebar.classList.add('scientific-active');
-        if (btnStd) {
-            btnStd.classList.remove('active');
-            btnStd.setAttribute('aria-checked', 'false');
-        }
-        if (btnSci) {
-            btnSci.classList.add('active');
-            btnSci.setAttribute('aria-checked', 'true');
-        }
-        if (sciContainer) sciContainer.classList.add('active');
+            document.body.classList.add('scientific-mode');
+            if (sidebar) sidebar.classList.add('scientific-active');
+            if (btnStd) {
+                btnStd.classList.remove('active');
+                btnStd.setAttribute('aria-checked', 'false');
+            }
+            if (btnSci) {
+                btnSci.classList.add('active');
+                btnSci.setAttribute('aria-checked', 'true');
+            }
+            if (sciContainer) sciContainer.classList.add('active');
 
             const sciRowsWrapper = document.getElementById('sci-rows-wrapper');
             if (sciRowsWrapper && sciRowsWrapper.children.length === 0) {
                 addScientificRow();
             }
         } else {
-        document.body.classList.remove('scientific-mode');
-        if (sidebar) sidebar.classList.remove('scientific-active');
-        if (btnSci) {
-            btnSci.classList.remove('active');
-            btnSci.setAttribute('aria-checked', 'false');
-        }
-        if (btnStd) {
-            btnStd.classList.add('active');
-            btnStd.setAttribute('aria-checked', 'true');
-        }
-        if (sciContainer) sciContainer.classList.remove('active');
+            document.body.classList.remove('scientific-mode');
+            if (sidebar) sidebar.classList.remove('scientific-active');
+            if (btnSci) {
+                btnSci.classList.remove('active');
+                btnSci.setAttribute('aria-checked', 'false');
+            }
+            if (btnStd) {
+                btnStd.classList.add('active');
+                btnStd.setAttribute('aria-checked', 'true');
+            }
+            if (sciContainer) sciContainer.classList.remove('active');
         }
     }
 
@@ -952,7 +1021,7 @@
         delBtn.className = 'icon-btn delete-row-btn';
         delBtn.title = 'Delete';
         delBtn.setAttribute('aria-label', 'Delete row');
-        
+
         const delSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         delSvg.setAttribute('width', '16'); delSvg.setAttribute('height', '16');
         delSvg.setAttribute('viewBox', '0 0 24 24'); delSvg.setAttribute('fill', 'none');
