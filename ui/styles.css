@@ -1177,6 +1177,11 @@ math-field:focus-within {
     transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
+/* Aurora: make history tape opaque so entries are readable */
+body[class*="theme-aurora"] .audit-tape-container {
+    background-color: rgba(10, 8, 18, 0.92);
+}
+
 .audit-tape-container.open {
     transform: translateX(0);
 }
