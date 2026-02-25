@@ -882,8 +882,12 @@
     function setThemeColor(btnEl, themeClass) {
         if (themeClass && !VALID_THEMES.includes(themeClass)) return;
 
-        document.querySelectorAll('.theme-swatch').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.theme-swatch').forEach(btn => {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-checked', 'false');
+        });
         btnEl.classList.add('active');
+        btnEl.setAttribute('aria-checked', 'true');
 
         document.body.classList.remove('theme-teal', 'theme-terracotta', 'theme-forest', 'theme-slate', 'theme-rosewood', 'theme-pistachio', 'theme-purple', 'theme-aurora', 'theme-aurora-ocean', 'theme-aurora-cyber', 'theme-aurora-sunset');
 

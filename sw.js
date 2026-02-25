@@ -10,6 +10,7 @@ const PRECACHE_URLS = [
     './icon-192.png',
     './icon-512.svg',
     './frame.png',
+    './screenshot-wide.png',
     // 3-Tier Architecture files
     './services/app.js',
     './ui/ui.js',

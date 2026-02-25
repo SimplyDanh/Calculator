@@ -7,6 +7,10 @@
     "scope": "./",
     "lang": "en",
     "display": "standalone",
+    "display_override": [
+        "window-controls-overlay",
+        "standalone"
+    ],
     "background_color": "#f4f5f7",
     "theme_color": "#0052cc",
     "orientation": "any",
@@ -32,8 +36,15 @@
             "src": "frame.png",
             "sizes": "1080x1920",
             "type": "image/png",
-            "label": "App screenshot",
+            "label": "Mobile view with percentage tools",
             "form_factor": "narrow"
+        },
+        {
+            "src": "screenshot-wide.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "label": "Desktop view with calculator and percentage cards",
+            "form_factor": "wide"
         }
     ],
     "icons": [
