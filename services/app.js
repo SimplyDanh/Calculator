@@ -901,7 +901,8 @@
             }
         }
 
-        togglePaletteDropdown(null);
+        const dropdown = document.getElementById('theme-dropdown-container');
+        if (dropdown) dropdown.classList.remove('active');
     }
 
     /* --- Keyboard Shortcuts --- */
