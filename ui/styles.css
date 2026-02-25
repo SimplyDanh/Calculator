@@ -1344,14 +1344,6 @@ math-field:focus-within {
     box-shadow: var(--glass-shadow-hover);
 }
 
-body.dark-theme .glass-fab {
-    /* Variables handled in :root / body.dark-theme */
-}
-
-body.dark-theme .glass-fab:hover {
-    /* Variables handled in :root / body.dark-theme */
-}
-
 /* Mobile Drawer Toggle */
 .mobile-panel-fab {
     display: none;
@@ -1705,10 +1697,6 @@ button:focus-visible {
 
 body.dark-theme .about-modal-inner::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.15);
-}
-
-body.dark-theme .about-modal {
-    /* Variables handled in :root / body.dark-theme */
 }
 
 .about-overlay.open .about-modal {
