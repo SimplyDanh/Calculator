@@ -456,6 +456,11 @@ body[class*="theme-aurora"] .left-panel header {
     contain: layout style;
 }
 
+/* Prevent iOS double-tap-to-zoom on calculator buttons */
+.calc-btn {
+    touch-action: manipulation;
+}
+
 /* Buttons use opaque background instead of costly backdrop-filter */
 body[class*="theme-aurora"] .calc-btn {
     background-color: var(--calc-btn-bg);
